@@ -3,6 +3,7 @@ from rest_framework.response import Response # type: ignore
 from serializers import ProductSerializer
 from rest_framework.views import APIView # type: ignore
 
+# for studying only not used in the project
 class ProductList(APIView):
     def get(self, request):
         all_products = Product.objects.all()
@@ -39,6 +40,4 @@ class Product(APIView):
             data.save()
             return Response(data.data, status=201)
         return Response(data.errors, status=400)
-    
-
     
