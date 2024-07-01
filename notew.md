@@ -33,3 +33,4 @@ Viewsets and URLs:
 
 Updated viewsets to handle nested routes for subcategories and products.
 Configured URLs to support nested resource fetching.
+
