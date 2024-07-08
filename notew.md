@@ -34,3 +34,5 @@ Viewsets and URLs:
 Updated viewsets to handle nested routes for subcategories and products.
 Configured URLs to support nested resource fetching.
 
+## https://medium.com/swlh/searching-in-django-rest-framework-45aad62e7782
+>> helped me in search part
