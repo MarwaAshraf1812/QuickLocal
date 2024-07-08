@@ -18,17 +18,23 @@ class ProductViewSet(viewsets.ModelViewSet):
         similar_products = Product.objects.filter(category=product.category).exclude(id=product.id)
 
         # Apply filters
+        category = request.query_params.get('category')
         name = request.query_params.get('name')
-        price_min = request.query_params.get('price_min')
-        price_max = request.query_params.get('price_max')
+        price_min = request.query_params.get('min_price')
+        price_max = request.query_params.get('max_price')
+        rating = request.query_params.get('rating')
         tags = request.query_params.getlist('tags')
 
+        if category:
+            similar_products = similar_products.filter(category__name__icontains=category)
         if name:
             similar_products = similar_products.filter(name__icontains=name)
         if price_min:
             similar_products = similar_products.filter(price__gte=price_min)
         if price_max:
             similar_products = similar_products.filter(price__lte=price_max)
+        if rating:
+            similar_products = similar_products.filter(rating__gte=rating)
         if tags:
             for tag in tags:
                 similar_products = similar_products.filter(tags__name=tag)
@@ -37,49 +43,32 @@ class ProductViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 class CategoryViewSet(viewsets.ModelViewSet):
-    # Prefetch related subcategories and products for efficient querying
     queryset = Category.objects.prefetch_related('subcategories', 'subcategories__products').all()
     serializer_class = CategorySerializer
 
     def retrieve(self, request, *args, **kwargs):
-        """
-        Handle GET request to retrieve a specific Category instance.
-        """
         instance = self.get_object()
         serializer = CategorySerializer(instance, context={'request': request})
         return Response(serializer.data)
 
     @action(detail=False, methods=['get'])
     def products(self, request):
-        """
-        Custom action to list products based on category and subcategory filters.
-        """
         category_id = request.query_params.get('category')
-        subcategory_id = request.query_params.get('subcategories')
+        subcategory_id = request.query_params.get('subcategory')
 
-        # Get the category or return a 404 error
         category = get_object_or_404(Category, id=category_id)
-        # Fetch all subcategories of the category
         subcategories = category.subcategories.all()
-
-        # Initially filter products by the category's subcategories
         products = Product.objects.filter(category__category=category)
 
-        # Further filter by subcategory if provided
         if subcategory_id:
             subcategory = get_object_or_404(SubCategory, id=subcategory_id)
             products = products.filter(category=subcategory)
 
-        # Serialize the data
-        # category_serializer = CategorySerializer(category, context={'request': request})
-        # subcategory_serializer = SubCategorySerializer(subcategories, many=True, context={'request': request})
         product_serializer = ProductSerializer(products, many=True)
-
-        # Return the serialized product data
         return Response({
             'products': product_serializer.data
         })
-    
+
 class SubcategoryViewSet(viewsets.ModelViewSet):
     queryset = SubCategory.objects.all()
     serializer_class = SubCategorySerializer
