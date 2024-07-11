@@ -1,0 +1,37 @@
+# The ERD and DFD provide a visual representation of the data structure and flow within the E-Commerce API
+
++-------------+              +---------------+             +-------------+
+|  Category   |              |  SubCategory  |             |   Product   |
++-------------+              +---------------+             +-------------+
+| id (PK)     |<--1-------∞--| id (PK)       |<--1-------∞-| id (PK)     |
+| name        |              | name          |             | name        |
+| description |              | category_id   |             | description |
+| image       |              | created_at    |             | price       |
+| created_at  |              | updated_at    |             | rating      |
+| updated_at  |              +---------------+             | stock       |
++-------------+                                            | image       |
+                                                           | created_at  |
+                                                           | updated_at  |
+                                                           | category_id |
+                                                           +-------------+
+
+
+===================================
+=> DFD
++--------------------------+
+| External User/Client App |
++--------------------------+
+      |          |          |
+      v          v          v
++---------+ +---------+ +---------+
+| Process | | Process | | Process |
+|  (CRUD) | |  (CRUD) | |  (CRUD) |
+| Product | | Category| | SubCategory|
++---------+ +---------+ +---------+
+      |          |          |
+      v          v          v
++---------+ +---------+ +---------+
+|  Data   | |  Data   | |  Data   |
+|  Store  | |  Store  | |  Store  |
+| Product | | Category| | SubCategory|
++---------+ +---------+ +---------+
