@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -39,10 +40,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework_simplejwt.token_blacklist',
     'django_filters',
     'taggit',
     'corsheaders',
     'products',
+    'account.apps.AccountConfig',
 ]
 
 MIDDLEWARE = [
@@ -94,6 +97,27 @@ DATABASES = {
     }
 }
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=10),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
+    'AUTH_HEADER_TYPES': ('Bearer'),
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken'),
+    'ALGORITHM': 'HS256',  # This is the deafult algorithm used to sign the tokens (Symmetric)
+    # 'SIGNING_KEY': SECRET_KEY,  # Make sure to set your SECRET_KEY
+    'VERIFYING_KEY': None,
+    'AUDIENCE': None,
+    'ISSUER': None,
+    'JWK_URL': None,
+    'LEEWAY': 0,
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
