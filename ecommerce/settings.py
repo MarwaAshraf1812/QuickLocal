@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'taggit',
     'corsheaders',
     'products',
+    'cart',
     'account.apps.AccountConfig',
 ]
 
@@ -61,6 +62,8 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
+
+CART_SESSION_ID = 'cart'
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
