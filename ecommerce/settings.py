@@ -126,6 +126,21 @@ SIMPLE_JWT = {
     'LEEWAY': 0,
 }
 
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'accounts.backends.EmailBackend',
+]
+
+# EMAIL_BACKEND='django.core.mail.backends.stmp.EmailBackend'
+# EMAIL_BACKEND='django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST = 'sandbox.smtp.mailtrap.io'
+EMAIL_HOST_USER = '7d66f9ff5d0bad'
+EMAIL_HOST_PASSWORD = 'b12dd1f98c3b1d'
+EMAIL_PORT = '2525'
+EMAIL_USE_TLS: False
+EMAIL_USE_SSL: False
+DEFAULT_FROM_EMAIL = 'shahendamagdy97@yahoo.com'
+
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
