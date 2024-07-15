@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    #'rest_framework.authtoken', # If you are using token authentication
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
@@ -128,7 +129,7 @@ SIMPLE_JWT = {
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
-    'accounts.backends.EmailBackend',
+    'account.backends.EmailBackend',
 ]
 
 # EMAIL_BACKEND='django.core.mail.backends.stmp.EmailBackend'
