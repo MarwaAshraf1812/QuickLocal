@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'products',
     'cart',
     'account.apps.AccountConfig',
+    'Ratings'
 ]
 
 MIDDLEWARE = [
