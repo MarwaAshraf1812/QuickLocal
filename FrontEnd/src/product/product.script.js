@@ -30,6 +30,7 @@ fetch("../../JSON/data.test.json")
     console.error('There was a problem with the fetch operation:', error);
   });
 
+
 // Function to display product details
 function displayProductDetails(product) {
   const productDetailContainer = document.getElementById('product-detail');
@@ -37,17 +38,23 @@ function displayProductDetails(product) {
   if (productDetailContainer) {
     productDetailContainer.innerHTML = `
       <img src="${product.image}" alt="${product.name}">
-      <h2>${product.name}</h2>
-      <p class="description">Description: ${product.description}</p>
-      <p class="productInformation">Product Information: ${product.productInformation}</p>
-      <p class="price">Price: $${product.price}</p>
-      <p class="category">Category: ${product.category}</p>
-      <p class="stock">Stock: ${product.stock}</p>
-      <p class="rating">Rating: ${product.rating}</p>
-      <p class="status">Status: ${product.status}</p>
-      <p class="color">Color: ${product.color}</p>
-      <p class="size">Size: ${product.size}</p>
-      <p class="tags">Tags: ${product.tags.join(', ')}</p>
+      <div class="card">
+        <h2>${product.name}</h2>
+        <p class="description">Description: ${product.description}</p>
+        <p class="productInformation">Product Information: ${product.productInformation}</p>
+        <p class="price">Price: $${product.price}</p>
+        <p class="category">Category: ${product.category}</p>
+        <p class="stock">Stock: ${product.stock}</p>
+        <p class="rating">Rating: ${product.rating}</p>
+        <p class="status">Status: ${product.status}</p>
+        <p class="color">Color: ${product.color}</p>
+        <p class="size">Size: ${product.size}</p>
+        <p class="tags">Tags: ${product.tags.join(', ')}</p>
+        <button class="btn add-cart">ADD TO CART</button>
+        <button class="btn buy">Buy Now</button>
+
+
+        </div>
     `;
   } else {
     console.error('Element with ID "product-detail" not found.');
