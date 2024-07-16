@@ -13,7 +13,7 @@ class CartViewSet(viewsets.ViewSet):
     Requires authentication for all actions.
     """
 
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     @action(detail=False, methods=['post'])
     def add_to_cart(self, request, product_id=None):

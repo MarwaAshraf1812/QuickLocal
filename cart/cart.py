@@ -16,9 +16,9 @@ class CartManager:
         self.cart = self._get_or_create_cart()
 
 
-    def _get_or_create_cart(self, request):
+    def _get_or_create_cart(self):
         if self.user:
-            cart = cart.objects.get_or_create(user=self.user)
+            cart = Cart.objects.get_or_create(user=self.user)
         else:
             cart_id = self.session.get('cart_id')
             if cart_id:
