@@ -5,6 +5,7 @@ from .models import UserProfile
 
 # Signal to create or update UserProfile when User is created or updated
 
+
 @receiver(post_save, sender=User)
 def create_or_update_user_profile(sender, instance, created, **kwargs):
     if created:

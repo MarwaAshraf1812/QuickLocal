@@ -7,16 +7,12 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.hashers import check_password
 
 
-class SingUpSerializer(serializers.ModelSerializer):
-    confirm_password = serializers.CharField(write_only=True, required=True, allow_blank=False, validators=[
-        validators.MinLengthValidator(8),
-        validate_password,
-    ])
+class SignUpSerializer(serializers.ModelSerializer):
+    confirm_password = serializers.CharField(write_only=True, required=True, allow_blank=False)
 
     class Meta:
         model = User
         fields = ('first_name', 'last_name', 'username', 'email', 'password', 'confirm_password')
-
         extra_kwargs = {
             'first_name': {'required': True, 'allow_blank': False},
             'last_name': {'required': True, 'allow_blank': False},
@@ -28,6 +24,7 @@ class SingUpSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         if attrs['password'] != attrs['confirm_password']:
             raise serializers.ValidationError({"password": _("Password fields do not match.")})
+        validate_password(attrs['password'])  # Ensuring password meets complexity requirements
         return attrs
 
     def create(self, validated_data):
@@ -54,10 +51,12 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = UserProfile
-        fields = ['phone_number', 'address', 'city', 'state', 'zip_code', 'country', 'profile_picture', 'date_of_birth', 'gender', 'preferred_language', 'currency']
+        fields = [
+            'phone_number', 'address', 'city', 'state', 'zip_code', 'country',
+            'profile_picture', 'date_of_birth', 'gender', 'preferred_language', 'currency'
+        ]
 
 
 class ChangePasswordSerializer(serializers.Serializer):
@@ -70,11 +69,11 @@ class ChangePasswordSerializer(serializers.Serializer):
 
         # Validate old password
         if not check_password(attrs['old_password'], user.password):
-            raise serializers.ValidationError({"old_password": "Old password is not correct."})
+            raise serializers.ValidationError({"old_password": _("Old password is not correct.")})
 
         # Validate new password
         if attrs['new_password'] != attrs['confirm_password']:
-            raise serializers.ValidationError({"new_password": "New password and confirm password do not match."})
+            raise serializers.ValidationError({"new_password": _("New password and confirm password do not match.")})
 
         # Validate password complexity
         try:
@@ -89,4 +88,3 @@ class ChangePasswordSerializer(serializers.Serializer):
         user.set_password(self.validated_data['new_password'])
         user.save()
         return user
-
