@@ -27,7 +27,7 @@ function displayProducts(products) {
     listItem.innerHTML = `
       <img src="${product.image}" alt="${product.name}">
       <h5>${product.name}</h5>
-      <p class="price">${product.price}</p>
+      <h4 class="price">$${product.price}</h4>
       ${product.offers ? `<p class="offers">Offers: ${product.offers}</p>` : ''}
       <a href="../product/product.html?id=${product.productId}" class="view-product-btn">View Product</a>
     `;
