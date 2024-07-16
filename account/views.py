@@ -269,6 +269,7 @@ def change_password(request):
 
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def logout(request):
     refresh_token = request.data.get('refresh_token')
 
