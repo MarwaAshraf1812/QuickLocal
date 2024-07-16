@@ -31,14 +31,15 @@ figcaption{
   border: 1px solid #ccc;
   border-radius: 5px;
   padding: 20px;
-  max-width: 1200px; 
-  display: flex;
+  max-width: 1200px; /* Adjusted max-width for larger space */
+  /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); */
+  display: flex; /* Enable flexbox layout */
   margin-top: .6%;
 }
 
 /* Product image */
 #product-detail img {
-  max-width: 50%;
+  max-width: 50%; /* Image takes up 50% of container width */
   height: 500px;
   border-radius: 5px;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
