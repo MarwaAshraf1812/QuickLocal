@@ -1,13 +1,14 @@
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from django.contrib.auth.models import User
-from django.contrib.auth.hashers import make_password, check_password
+from django.contrib.auth.hashers import make_password
 from rest_framework import status
 from .models import UserProfile
-from rest_framework import serializers
-from .serializers import SingUpSerializer, UserSerializer, UserProfileSerializer, ChangePasswordSerializer
-from rest_framework.permissions import IsAuthenticated
-from django.contrib.auth import authenticate, update_session_auth_hash
+from .serializers import (
+    SignUpSerializer, UserSerializer, UserProfileSerializer,
+    ChangePasswordSerializer)
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 import logging
 from django.utils.crypto import get_random_string
@@ -19,7 +20,7 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.tokens import default_token_generator
-from django.contrib.auth.password_validation import validate_password
+from django.utils import timezone
 
 logger = logging.getLogger(__name__)
 
@@ -31,43 +32,48 @@ def get_current_host(request):
 
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def register(request):
     data = request.data
-    serializer = SingUpSerializer(data=data)
+    serializer = SignUpSerializer(data=data)
 
     if serializer.is_valid():
         email = data.get('email')
-        username = data.get('username')  # Assuming username is provided
+        username = data.get('username')
 
         if not User.objects.filter(email=email).exists():
-            # Create a user but mark as inactive
             user = User.objects.create(
                 first_name=data['first_name'],
                 last_name=data['last_name'],
                 email=email,
                 username=username,
                 password=make_password(data['password']),
-                is_active=False  # User is inactive until email is verified
+                is_active=False
             )
 
-            # Generate a verification token
             token = get_random_string(length=32)
             profile = user.userprofile
             profile.activation_token = token
-            profile.token_created_at = datetime.now()
+            profile.token_created_at = timezone.now()
             profile.save()
 
-            # Send verification email
-            host_url = get_current_host(request)
-            verification_link = f"{host_url}/activate/{token}/"
-            subject = 'Activate Your Account'
-            message = f'Hi {user.first_name},\n\nPlease click the link below to activate your account:\n\n{verification_link}'
-            send_mail(subject, message, settings.EMAIL_HOST_USER, [email])
-
-            return Response(
-                {'details': 'Please check your email to activate your account.'},
-                status=status.HTTP_201_CREATED
-            )
+            try:
+                host_url = get_current_host(request)
+                verification_link = f"{host_url}/activate/{token}/"
+                subject = 'Activate Your Account'
+                message = f'Hi {user.first_name},\n\nPlease click the link below to activate your account:\n\n{verification_link}'
+                send_mail(subject, message, settings.EMAIL_HOST_USER, [email])
+                print("Email sent")
+                return Response(
+                    {'details': 'Please check your email to activate your account.'},
+                    status=status.HTTP_201_CREATED
+                )
+            except Exception as e:
+                print(f"Error sending email: {e}")
+                return Response(
+                    {'error': f'An error occurred while sending the verification email: {str(e)}'},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                )
         else:
             return Response(
                 {'error': 'This email already exists!'},
@@ -78,6 +84,7 @@ def register(request):
 
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def activate(request, token):
     try:
         profile = UserProfile.objects.get(activation_token=token)
@@ -98,6 +105,7 @@ def activate(request, token):
 
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def login(request):
     email = request.data.get('email')
     password = request.data.get('password')
@@ -135,6 +143,7 @@ def login(request):
 
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def resend_verification_email(request):
     email = request.data.get('email')
 
@@ -201,6 +210,7 @@ def profile_view(request):
 
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def forget_password(request):
     email = request.data.get('email')
     try:
@@ -219,6 +229,7 @@ def forget_password(request):
 
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def reset_password(request, uid, token):
     try:
         user = User.objects.get(pk=uid)
@@ -255,3 +266,19 @@ def change_password(request):
         serializer.save()
         return Response({'detail': 'Password has been changed successfully.'}, status=status.HTTP_200_OK)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+def logout(request):
+    refresh_token = request.data.get('refresh_token')
+
+    if not refresh_token:
+        return Response({'error': 'Refresh token is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        token = RefreshToken(refresh_token)
+        token.blacklist()
+
+        return Response({'success': 'User logged out successfully'}, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
