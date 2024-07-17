@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./auth.css">
+  <!-- <link rel="stylesheet" href="./test.css"> -->
+  <title>Document</title>
+</head>
+
+<body>
+  <div class="signup-container">
+    <div class="signup-form">
+      <div class="signup-form-left">
+        <h2 class="signup-title">Registration</h2>
+        <div class="line"></div>
+        <form method="POST">
+          <div class="signup-group">
+            <label for="id_username" class="signup-label">Username:</label>
+            <input type="text" name="username" class="signup-control" id="id_username">
+          </div>
+          <div class="signup-group">
+            <label for="email" class="signup-label">E-mail:</label>
+            <input type="email" name="email" class="signup-control" id="email">
+          </div>
+          <div class="signup-group">
+            <label for="id_password1" class="signup-label">Password:</label>
+            <input type="password" name="password1" class="signup-control" id="id_password1">
+          </div>
+          <div class="signup-group">
+            <label for="id_password2" class="signup-label">Confirm Password:</label>
+            <input type="password" name="password2" class="signup-control" id="id_password2">
+          </div>
+          <p class="login-para">Already have an account? <a href="{% url 'accounts:login' %}"
+              class="login-link">Login</a>
+          </p>
+          <button type="submit" class="btn signup-btn">Sign Up</button>
+        </form>
+      </div>
+    </div>
+    <div class="signup-form-right">
+      <img src="../../assets/images/20824341_6368592.jpg" alt="Image" class="signup-image">
+    </div>
+  </div>
+</body>
+
+</html>
