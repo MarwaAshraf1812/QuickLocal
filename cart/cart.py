@@ -60,5 +60,9 @@ class CartManager:
     def get_total_price(self):
         return sum(item.product.price * item.quantity for item in self.get_items())
 
+    def get_cart(self):
+        return self.session.get('cart', [])
+
     def clear(self):
-        self.cart.cartitem_set.all().delete()
+        self.session['cart'] = []
+        self.session.modified = True
