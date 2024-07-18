@@ -1,4 +1,4 @@
-fetch("../../JSON/data.json")
+fetch("../../JSON/data.test.json")
   .then(response => {
     if (!response.ok) {
       throw new Error('Network response was not ok ' + response.statusText);
@@ -25,9 +25,9 @@ function displayProducts(products) {
 
     // Create the HTML structure for the product
     listItem.innerHTML = `
-      <img src="${product.imageUrl}" alt="${product.title}">
-      <h5>${product.title}</h5>
-      <p class="price">${product.price}</p>
+      <img src="${product.image}" alt="${product.name}">
+      <h5>${product.name}</h5>
+      <h4 class="price">$${product.price}</h4>
       ${product.offers ? `<p class="offers">Offers: ${product.offers}</p>` : ''}
       <a href="../product/product.html?id=${product.productId}" class="view-product-btn">View Product</a>
     `;
