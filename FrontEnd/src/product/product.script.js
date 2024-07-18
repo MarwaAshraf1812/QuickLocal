@@ -43,7 +43,6 @@ function displayProductDetails(product) {
         <p class="description">Description: ${product.description}</p>
         <p class="productInformation">Product Information: ${product.productInformation}</p>
         <p class="price">Price: $${product.price}</p>
-        <p class="category">Category: ${product.category}</p>
         <p class="stock">Stock: ${product.stock}</p>
         <p class="rating">Rating: ${product.rating}</p>
         <p class="status">Status: ${product.status}</p>
