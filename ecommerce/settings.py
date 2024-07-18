@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'products',
     'cart',
+    'orders',
     'account.apps.AccountConfig',
     'Ratings'
 ]
