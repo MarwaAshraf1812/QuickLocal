@@ -13,11 +13,15 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 import os
 from pathlib import Path
 from datetime import timedelta
-import dotenv
+import dotenv #type: ignore
 dotenv.load_dotenv()
+from decouple import config #type: ignore
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+STRIPE_SECRET_KEY = config('STRIPE_KEY')
+DEBUG = config('DEBUG', default=False, cast=bool)
 
 
 # Quick-start development settings - unsuitable for production
@@ -49,6 +53,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'products',
     'cart',
+    'orders',
     'account.apps.AccountConfig',
     'Ratings'
     'wishlist'
