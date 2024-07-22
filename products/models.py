@@ -44,3 +44,11 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
+    def update_rating(self):
+        ratings = self.product_ratings.all()
+        if ratings.exists():
+            self.rating = ratings.aggregate(models.Avg('rating'))['rating__avg']
+        else:
+            self.rating = None
+        self.save()
