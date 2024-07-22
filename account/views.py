@@ -144,7 +144,7 @@ def login(request):
         key='access_token',
         value=str(refresh.access_token),
         httponly=True,
-        secure=True,
+        secure=False, # Set to False for testing on http otherwise must be true on production
         samesite='Lax',
         max_age=3600,  # 1 hour
     )
@@ -152,7 +152,7 @@ def login(request):
         key='refresh_token',
         value=str(refresh),
         httponly=True,
-        secure=True,
+        secure=False, # Set to False for testing on http otherwise must be true on production
         samesite='Lax',
         max_age=3600 * 24 * 10,  # 10 days
     )
