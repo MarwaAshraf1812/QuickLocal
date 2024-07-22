@@ -5,11 +5,7 @@ from products.models import Product
 
 class Rating(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
-<<<<<<< HEAD
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product_ratings')
-=======
-    product = models.ForeignKey(Product, related_name='ratings', on_delete=models.CASCADE)
->>>>>>> 1b8fa9596cb54cab2ffe241e9a15f890789523c7
     rating = models.IntegerField(choices=[(i, i) for i in range(1, 6)])
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
