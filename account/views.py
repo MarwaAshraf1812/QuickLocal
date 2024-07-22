@@ -21,6 +21,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.tokens import default_token_generator
 from django.utils import timezone
+from rest_framework_simplejwt.views import TokenRefreshView
+from rest_framework_simplejwt.tokens import RefreshToken
 
 logger = logging.getLogger(__name__)
 
@@ -132,12 +134,28 @@ def login(request):
     # Generate tokens for the authenticated user
     refresh = RefreshToken.for_user(user)
 
-    # Redirect to profile page
+    # Modification: Set tokens as cookies
     response = Response({
         'refresh': str(refresh),
         'access': str(refresh.access_token),
         'redirect': '/profile/'  # URL to redirect to profile page
     }, status=status.HTTP_200_OK)
+    response.set_cookie(
+        key='access_token',
+        value=str(refresh.access_token),
+        httponly=True,
+        secure=True,
+        samesite='Lax',
+        max_age=3600,  # 1 hour
+    )
+    response.set_cookie(
+        key='refresh_token',
+        value=str(refresh),
+        httponly=True,
+        secure=True,
+        samesite='Lax',
+        max_age=3600 * 24 * 10,  # 10 days
+    )
 
     return response
 
@@ -280,6 +298,26 @@ def logout(request):
         token = RefreshToken(refresh_token)
         token.blacklist()
 
-        return Response({'success': 'User logged out successfully'}, status=status.HTTP_200_OK)
+        # Modification: Clear tokens from cookies
+        response = Response({'success': 'User logged out successfully'}, status=status.HTTP_200_OK)
+        response.delete_cookie('access_token')
+        response.delete_cookie('refresh_token')
+
+        return response
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class CustomTokenRefreshView(TokenRefreshView):
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+        if response.status_code == 200:
+            response.set_cookie(
+                key='access_token',
+                value=response.data['access'],
+                httponly=True,
+                secure=True,
+                samesite='Lax',
+                max_age=3600,  # 1 hour
+            )
+        return response
