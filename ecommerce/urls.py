@@ -26,5 +26,6 @@ urlpatterns = [
     path('token/', TokenObtainPairView.as_view()),
     path('', include('cart.urls')),
     path('', include('Ratings.urls')),
+    path('', include('wishlist.urls')),
     path('', include('orders.urls')),
 ]
