@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    #'rest_framework.authtoken', # If you are using token authentication
+    'rest_framework.authtoken', # If you are using token authentication
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'cart',
     'account.apps.AccountConfig',
     'Ratings'
+    'wishlist'
 ]
 
 MIDDLEWARE = [
