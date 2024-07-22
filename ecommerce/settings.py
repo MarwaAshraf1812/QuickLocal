@@ -10,19 +10,25 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 from datetime import timedelta
-import os
+import dotenv #type: ignore
+dotenv.load_dotenv()
+from decouple import config #type: ignore
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+STRIPE_SECRET_KEY = config('STRIPE_KEY')
+DEBUG = config('DEBUG', default=False, cast=bool)
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-bs8bwr7^bw2=u4y#kiz)n1)=s#t0l-@6@75ps^c+c*qf5kjv5j'
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -38,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'rest_framework.authtoken', # If you are using token authentication
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
@@ -46,7 +53,10 @@ INSTALLED_APPS = [
     'corsheaders',
     'products',
     'cart',
+    'orders',
     'account.apps.AccountConfig',
+    'Ratings',
+    'wishlist',
 ]
 
 MIDDLEWARE = [
@@ -59,7 +69,16 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
-]
+    
+    ]
+
+# Ensure HTTPS is used for secure cookies
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
+# Use Lax for SameSite attribute on cookies
+SESSION_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_SAMESITE = 'Lax'
 
 CORS_ALLOW_ALL_ORIGINS = True
 
@@ -111,14 +130,14 @@ REST_FRAMEWORK = {
 
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=10),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=10),
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
-    'AUTH_HEADER_TYPES': ('Bearer'),
-    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken'),
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
     'ALGORITHM': 'HS256',  # This is the deafult algorithm used to sign the tokens (Symmetric)
-    # 'SIGNING_KEY': SECRET_KEY,  # Make sure to set your SECRET_KEY
+    'SIGNING_KEY': SECRET_KEY,  # Make sure to set your SECRET_KEY
     'VERIFYING_KEY': None,
     'AUDIENCE': None,
     'ISSUER': None,
@@ -128,18 +147,16 @@ SIMPLE_JWT = {
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
-    'accounts.backends.EmailBackend',
+    'account.backends.EmailBackend',
 ]
 
-# EMAIL_BACKEND='django.core.mail.backends.stmp.EmailBackend'
-# EMAIL_BACKEND='django.core.mail.backends.console.EmailBackend'
-EMAIL_HOST = 'sandbox.smtp.mailtrap.io'
-EMAIL_HOST_USER = '7d66f9ff5d0bad'
-EMAIL_HOST_PASSWORD = 'b12dd1f98c3b1d'
-EMAIL_PORT = '2525'
-EMAIL_USE_TLS: False
-EMAIL_USE_SSL: False
-DEFAULT_FROM_EMAIL = 'shahendamagdy97@yahoo.com'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 465
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_USE_SSL = True
+DEFAULT_FROM_EMAIL = 'applicationdeveloper97@gmail.com'
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

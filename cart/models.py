@@ -11,7 +11,7 @@ class Cart(models.Model):
        - Purpose: To link the cart to a user and maintain
        cart creation and update timeStimps.
     """
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='cart')
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -30,7 +30,7 @@ class CartItem(models.Model):
         - To represent and manage individual products in a cart,
         keeping track of the quantity of each product,
     """
-    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='items')
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
     price = models.DecimalField(max_digits=10, decimal_places=2)

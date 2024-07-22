@@ -1,0 +1,6 @@
+Process for Creating an Order from Cart Items
+    Receive Cart Data: Extract cart data from the request body.
+    Create Order: Instantiate and save a new Order object with user and order details.
+    Create Order Items: For each item in the cart, create and save an OrderItem linked to the newly created Order.
+    Clear Cart: Optionally, clear the cart after the order is created.
+    Return Response: Return a response with the order details.

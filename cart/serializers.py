@@ -1,18 +1,18 @@
-from decimal import Decimal
 from rest_framework import serializers #type: ignore
-from products.models import Product
 from products.serializers import ProductSerializer
+from .models import CartItem
 
 
-class CartItemSerializer(serializers.Serializer):
+class CartItemSerializer(serializers.ModelSerializer):
     product = serializers.SerializerMethodField()
-    quantity = serializers.IntegerField()
-    price = serializers.DecimalField(max_digits=10, decimal_places=2)
-    total_price = serializers.DecimalField(max_digits=10, decimal_places=2)
+
+    class Meta:
+        model = CartItem
+        fields = ['id', 'cart', 'product', 'quantity']
 
     def get_product(self, obj):
-        # Assuming 'product' is a nested object in 'self.cart'
-        return ProductSerializer(obj['product']).data
+        # Assuming obj.product is a ForeignKey to Product model
+        return ProductSerializer(obj.product).data
 
     
 class CartSerializer(serializers.Serializer):
