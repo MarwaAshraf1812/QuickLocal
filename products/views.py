@@ -6,6 +6,7 @@ from rest_framework.decorators import action #type: ignore
 from rest_framework.response import Response #type: ignore
 from django.shortcuts import get_object_or_404
 from .Helper_function import apply_product_filters
+from rest_framework.permissions import AllowAny #type: ignore
 
 # Use logging to capture exceptions for better debugging.
 logger = logging.getLogger(__name__)
@@ -20,6 +21,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['name', 'description', 'category__name', 'tags__name']
     ordering_fields = ['price', 'created_at']
+    permission_classes = [AllowAny] 
 
     @action(detail=False, methods=['get'])
     def similar(self, request, pk=None) -> Response:
@@ -55,6 +57,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
     """
     queryset = Category.objects.prefetch_related('subcategories', 'subcategories__products').all()
     serializer_class = CategorySerializer
+    permission_classes = [AllowAny] 
 
     def retrieve(self, request, *args, **kwargs) -> Response:
         """
@@ -139,6 +142,7 @@ class SubcategoryViewSet(viewsets.ModelViewSet):
     """
     queryset = SubCategory.objects.all()
     serializer_class = SubCategorySerializer
+    permission_classes = [AllowAny]
 
     def retrieve(self, request, *args, **kwargs) -> Response:
         """
