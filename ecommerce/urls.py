@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.views import TokenObtainPairView #type: ignore
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,4 +27,5 @@ urlpatterns = [
     path('', include('cart.urls')),
     path('', include('Ratings.urls')),
     path('', include('wishlist.urls')),
+    path('', include('orders.urls')),
 ]
