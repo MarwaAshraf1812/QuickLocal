@@ -13,10 +13,20 @@ from django.conf import settings
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
 class OrderViewSet(viewsets.ViewSet):
+    """
+    A ViewSet for handling orders, including creation,
+    retrieval, updating, and deletion of orders.
+    """
     @action(detail=False, methods=['post'])
-    def create_order(self, request):
+    def create_order(self, request)-> Response:
         """
         Create an order from cart items and return the total amount, total items, and Stripe client secret.
+        
+        Args:
+            request (Request): The request object containing order data.
+
+        Returns:
+            Response: A response object containing the order details and Stripe client secret.
         """
         serializer = CreateOrderSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -78,9 +88,15 @@ class OrderViewSet(viewsets.ViewSet):
         }, status=status.HTTP_201_CREATED)
 
     @action(detail=False, methods=['get'])
-    def user_orders(self, request):
+    def user_orders(self, request) -> Response:
         """
         Retrieve all orders for the authenticated user.
+
+        Args:
+            request (Request): The request object.
+
+        Returns:
+            Response: A response object containing the user's orders.
         """
         if not request.user.is_authenticated:
             return Response({'message': 'you are not loged in !'}, status=status.HTTP_401_UNAUTHORIZED)
@@ -91,9 +107,16 @@ class OrderViewSet(viewsets.ViewSet):
         return Response(serializer.data)
     
     @action(detail=True, methods=['get'])
-    def order_detail(self, request, pk=None):
+    def order_detail(self, request, pk=None) -> Response:
         """
         Retrieve a specific order by its ID.
+
+        Args:
+            request (Request): The request object.
+            pk (str): The primary key of the order.
+
+        Returns:
+            Response: A response object containing the order details.
         """
         try:
             order = Order.objects.get(id=pk)
@@ -104,18 +127,31 @@ class OrderViewSet(viewsets.ViewSet):
         return Response(serializer.data)
     
     @action(detail=False, methods=['get'])
-    def list_all_orders(self, request):
+    def list_all_orders(self, request) -> Response:
         """
-        Retrieve all orders (Admin only).
+        Retrieve all orders.
+
+        Args:
+            request (Request): The request object.
+
+        Returns:
+            Response: A response object containing all orders.
         """
         orders = Order.objects.all()
         serializer = OrderSerializer(orders, many=True)
         return Response(serializer.data)
 
     @action(detail=True, methods=['put'])
-    def update_order(self, request, pk=None):
+    def update_order(self, request, pk=None) -> Response:
         """
         Update an existing order.
+
+        Args:
+            request (Request): The request object containing order data.
+            pk (str): The primary key of the order.
+
+        Returns:
+            Response: A response object containing the updated order details.
         """
         try:
             order = Order.objects.get(id=pk)
@@ -129,9 +165,16 @@ class OrderViewSet(viewsets.ViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=['delete'])
-    def delete_order(self, request, pk=None):
+    def delete_order(self, request, pk=None) -> Response:
         """
-        Delete order by its ID.
+        Delete an order by its ID.
+
+        Args:
+            request (Request): The request object.
+            pk (str): The primary key of the order.
+
+        Returns:
+            Response: A response object indicating whether the deletion was successful.
         """
         try:
             order = Order.objects.get(id=pk)
@@ -139,4 +182,3 @@ class OrderViewSet(viewsets.ViewSet):
             return Response({'message': 'Order deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
         except Order.DoesNotExist:
             return Response({'message': 'Order not found'}, status=status.HTTP_404_NOT_FOUND)
-
