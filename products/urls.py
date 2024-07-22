@@ -13,8 +13,6 @@ urlpatterns = [
     path('', include(router.urls)),
     path('category-products/', CategoryViewSet.as_view({'get': 'products'})),
     path('products/<int:pk>/similar/', ProductViewSet.as_view({'get': 'similar'}), name='product-similar'),
-    path('categories/delete_category/<int:pk>/', CategoryViewSet.as_view({'delete': 'delete_category'}), name='delete_category'),
-    path('subcategories/delete_subcategory/<int:pk>/', SubcategoryViewSet.as_view({'delete': 'delete_subcategory'}), name='delete_subcategory'),
 ]
 
 if settings.DEBUG:
