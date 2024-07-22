@@ -1,0 +1,115 @@
+body {
+    font-family: "Nunito", sans-serif;
+}
+.signup-container{
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    width: 70%;
+    background-color: #e1e0e0;
+    margin: 8% auto;
+    border: 1px solid #eae8e8;
+    border-radius: 10px;
+
+}
+.signup-form{
+    display: flex;
+    justify-content: space-between;
+    width: 85%;
+    max-width: 800px;
+    align-items: center;
+}
+
+.signup-form-left{
+    flex: 1;
+    padding-left: 10%;
+}
+.signup-form-right{
+    flex: 1;
+}
+
+.signup-title{
+    color: #346aba;
+    font-size: 30px;
+    margin-bottom: 3px;
+}
+
+.line{
+    width: 7%;
+    height: 2px;
+    background-color: #346aba;
+    margin-bottom: 20px;
+    margin-left: 20px;
+
+}
+
+.signup-group{
+    margin-bottom: 20px;
+}
+
+.signup-label{
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.signup-control{
+    width: 86%;
+    padding: 10px;
+    margin: 5px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    font-size: 18px;
+}
+
+.signup-control:hover, .signup-control:focus{
+    border: 1px solid #346aba;
+    outline: none;
+}
+
+.signup-btn{
+    width: 91.5%;
+    /* margin: auto; */
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #346aba;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.signup-btn:hover {
+    /* background-color: #346aba; */
+    transition: all 0.3s;
+}
+
+.signup-image {
+    display: none;
+}
+
+.login-para {
+    margin-top: 25px;
+    font-size: 16px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.login-link{
+    color: #346aba;
+    font-weight: bold;
+    text-decoration:underline;
+    margin-left: 10px;
+}
+
+@media (min-width: 1100px) {
+    .signup-image {
+        display: block;
+        width: 100%;
+}
+    .signup-form {
+        width: 40%;
+    }
+    .signup-btn {
+        width: 86%;
+    }
+}
