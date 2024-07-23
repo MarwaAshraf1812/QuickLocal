@@ -14,33 +14,33 @@
       <div class="signup-form-left">
         <h2 class="signup-title">Registration</h2>
         <div class="line"></div>
-        <form>
+        <form id="register-form" method="post">
           <div class="signup-group">
-            <label for="id_username" class="signup-label">First Name:</label>
-            <input type="text" name="username" class="signup-control" id="id_username">
+            <label for="id_first_name" class="signup-label">First Name:</label>
+            <input type="text" name="first_name" class="signup-control" id="id_first_name" required>
           </div>
           <div class="signup-group">
-            <label for="id_username" class="signup-label">Last Name:</label>
-            <input type="text" name="username" class="signup-control" id="id_username">
+            <label for="id_last_name" class="signup-label">Last Name:</label>
+            <input type="text" name="last_name" class="signup-control" id="id_last_name" required>
           </div>
           <div class="signup-group">
-            <label for="id_username" class="signup-label">Username</label>
-            <input type="text" name="username" class="signup-control" id="id_username">
+            <label for="id_username" class="signup-label">Username:</label>
+            <input type="text" name="username" class="signup-control" id="id_username" required>
           </div>
           <div class="signup-group">
             <label for="email" class="signup-label">E-mail:</label>
-            <input type="email" name="email" class="signup-control" id="email">
+            <input type="email" name="email" class="signup-control" id="email" required>
           </div>
           <div class="signup-group">
             <label for="id_password1" class="signup-label">Password:</label>
-            <input type="password" name="password1" class="signup-control" id="id_password1">
+            <input type="password" name="password" class="signup-control" id="id_password1" required>
           </div>
           <div class="signup-group">
             <label for="id_password2" class="signup-label">Confirm Password:</label>
-            <input type="password" name="password2" class="signup-control" id="id_password2">
+            <input type="password" name="confirm_password" class="signup-control" id="id_password2" required>
           </div>
-          <p class="login-para">Already have an account? <a href="./login.html" class="login-link">Login</a>
-          </p>
+          <p class="alert-prase"></p>
+          <p class="login-para">Already have an account? <a href="./login.html" class="login-link">Login</a></p>
           <button type="submit" class="btn signup-btn">Sign Up</button>
         </form>
       </div>
@@ -49,6 +49,7 @@
       <img src="../../assets/images/20824341_6368592.jpg" alt="image" class="signup-image">
     </div>
   </div>
+  <script src="./auth.js"></script>
 </body>
 
 </html>

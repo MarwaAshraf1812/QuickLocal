@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
   const registerForm = document.getElementById('register-form');
   const loginForm = document.getElementById('login-form');
+  const alertPrase = document.querySelector('.alert-prase'); // Select the alert-prase element
 
   if (registerForm) {
     registerForm.addEventListener('submit', function (event) {
@@ -16,21 +17,25 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
+  function displayMessage(message, type) {
+    // Create a new <p> element
+    const messageElement = document.createElement('p');
+    messageElement.classList.add(type === 'error' ? 'error-message' : 'success-message');
+    messageElement.textContent = message;
+
+    // Clear previous messages
+    alertPrase.innerHTML = '';
+
+    // Append the new message
+    alertPrase.appendChild(messageElement);
+  }
+
   async function handleRegister() {
     const formData = new FormData(registerForm);
     const data = {};
     formData.forEach((value, key) => {
       data[key] = value;
     });
-
-    // Define the message container
-    let messageContainer = document.querySelector('.message-container');
-    if (!messageContainer) {
-      messageContainer = document.createElement('div');
-      messageContainer.classList.add('message-container');
-      registerForm.prepend(messageContainer);
-    }
-    messageContainer.innerHTML = ''; // Clear previous messages
 
     try {
       const response = await fetch('http://127.0.0.1:8000/register/', {
@@ -44,17 +49,16 @@ document.addEventListener('DOMContentLoaded', function () {
       const result = await response.json();
 
       if (response.ok) {
-        messageContainer.innerHTML = `<p class="success-message">${result.details}</p>`;
-        window.location.href = '../pages/LandingPage/home.html'; // Redirect to landing page
+        displayMessage('Registration successful! Please check your email to activate your account.', 'success');
+        setTimeout(() => {
+          window.location.href = './activate.html'; // Redirect to activation page
+        }, 2000); // Add a short delay before redirect
       } else {
-        messageContainer.innerHTML = `<p class="error-message">${result.error}</p>`;
-        if (result.error === 'This email already exists!') {
-          alert("This email already exists");
-        }
+        displayMessage(result.error || 'An error occurred.', 'error');
       }
     } catch (error) {
       console.error('Error:', error);
-      messageContainer.innerHTML = `<p class="error-message">An error occurred. Please try again.</p>`;
+      displayMessage('An error occurred. Please try again.', 'error');
     }
   }
 
@@ -64,15 +68,6 @@ document.addEventListener('DOMContentLoaded', function () {
     formData.forEach((value, key) => {
       data[key] = value;
     });
-
-    // Define the message container
-    let messageContainer = document.querySelector('.message-container');
-    if (!messageContainer) {
-      messageContainer = document.createElement('div');
-      messageContainer.classList.add('message-container');
-      loginForm.prepend(messageContainer);
-    }
-    messageContainer.innerHTML = ''; // Clear previous messages
 
     try {
       const response = await fetch('http://127.0.0.1:8000/login/', {
@@ -86,17 +81,16 @@ document.addEventListener('DOMContentLoaded', function () {
       const result = await response.json();
 
       if (response.ok) {
-        messageContainer.innerHTML = `<p class="success-message">${result.details || 'Login successful. Redirecting...'}</p>`;
-        window.location.href = result.redirect || '../pages/LandingPage/home.html'; // Redirect to the specified URL or landing page
+        displayMessage(result.details || 'Login successful. Redirecting...', 'success');
+        setTimeout(() => {
+          window.location.href = result.redirect || '../pages/LandingPage/home.html'; // Redirect to the specified URL or landing page
+        }, 2000); // Add a short delay before redirect
       } else {
-        messageContainer.innerHTML = `<p class="error-message">${result.error}</p>`;
-        if (result.error === 'Please verify your email before logging in.') {
-          alert("Please verify your email before logging in");
-        }
+        displayMessage(result.error || 'An error occurred.', 'error');
       }
     } catch (error) {
       console.error('Error:', error);
-      messageContainer.innerHTML = `<p class="error-message">An error occurred. Please try again.</p>`;
+      displayMessage('An error occurred. Please try again.', 'error');
     }
   }
 });
