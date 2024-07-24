@@ -6,6 +6,7 @@ from django.shortcuts import get_object_or_404
 from products.models import Product
 from .cart import CartManager
 from .serializers import CartItemSerializer
+from typing import Optional
 
 class CartViewSet(viewsets.GenericViewSet, viewsets.ViewSet):
     """
@@ -16,7 +17,7 @@ class CartViewSet(viewsets.GenericViewSet, viewsets.ViewSet):
     permission_classes = [IsAuthenticated]
 
     @action(detail=False, methods=['post'], url_path='add-to-cart/(?P<product_id>[^/.]+)')
-    def add_to_cart(self, request, product_id=None):
+    def add_to_cart(self, request, product_id: Optional[int] = None) -> Response:
         """
         Custom action to add a product to the cart.
 
@@ -38,7 +39,7 @@ class CartViewSet(viewsets.GenericViewSet, viewsets.ViewSet):
         return Response({"message": "Product added to cart successfully"}, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['get'], url_path='list-cart-items')
-    def list_cart_items(self, request):
+    def list_cart_items(self, request) -> Response:
         """
         Retrieve all items in the cart.
 
@@ -67,7 +68,7 @@ class CartViewSet(viewsets.GenericViewSet, viewsets.ViewSet):
         return Response(response_data)
 
     action(detail=False, methods=['post'])
-    def remove_from_cart(self, request, product_id=None):
+    def remove_from_cart(self, request, product_id=None) -> Response:
         """
         Remove a product from the cart.
 
@@ -86,8 +87,8 @@ class CartViewSet(viewsets.GenericViewSet, viewsets.ViewSet):
         else:
             return Response({"error": "Product not found in the cart"}, status=status.HTTP_404_NOT_FOUND)
 
-    @action(detail=False, methods=['post'])
-    def update_cart_item(self, request, product_id=None):
+    @action(detail=False, methods=['post'], url_path='update-cart-item/(?P<product_id>[^/.]+)')
+    def update_cart_item(self, request, product_id=None) -> Response:
         """
         Update quantity of a product in the cart.
 
@@ -118,8 +119,8 @@ class CartViewSet(viewsets.GenericViewSet, viewsets.ViewSet):
         except ValueError as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(detail=False, methods=['delete'])
-    def clear_cart(self, request):
+    @action(detail=False, methods=['delete'], url_path='clear-cart')
+    def clear_cart(self, request) -> Response:
         """
         Clear the cart by removing all items.
 
