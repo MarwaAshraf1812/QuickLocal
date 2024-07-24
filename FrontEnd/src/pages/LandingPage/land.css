@@ -4,7 +4,8 @@
   margin: 0 auto;
   display: grid;
   grid-template-columns:  1.3fr 1fr;
-  background-color: #EDEDEC;
+  /* background-color: #EDEDEC; */
+  background-color: #ebfff2;
   margin-bottom: 10%;
 }
 
@@ -20,7 +21,7 @@
 .cta-section {
   margin-top: 37%;
   font-size: 14px;
-  color: darkblue;
+  /* color: darkblue; */
   font-weight: bold;
 }
 
@@ -30,9 +31,6 @@
   /* color: darkblue; */
 }
 
-.highlight {
-  color: darkblue;
-}
 
 .web-title {
   text-align: center;
@@ -51,7 +49,7 @@
 button {
   padding: 8px 16px; /* Adjusts the size of the button */
   font-size: 14px; /* Sets the font size */
-  background-color: #1689B9; /* Background color */
+  background-color: #000; /* Background color */
   color: white; /* Text color */
   border: none; /* Removes default border */
   border-radius: 4px; /* Rounds the corners of the button */
@@ -60,9 +58,6 @@ button {
   margin-top: 1px;
 }
 
-button:hover {
-  background-color: #19556f; /* Darker color on hover */
-}
 
 .featured-image{
   margin: 0 auto;
@@ -98,8 +93,8 @@ button:hover {
 }
 
 .category-card {
-  width: 200px;
-  height: 200px;
+  width: 250px;
+  height: 300px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -114,7 +109,7 @@ button:hover {
 }
 
 .category-card:hover {
-  background-color: #ccc;
+  background-color: #ddd;
 }
 
 .category-card img {
