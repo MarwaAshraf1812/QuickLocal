@@ -1,5 +1,6 @@
 from django.db import models
 from taggit.managers import TaggableManager # type: ignore
+from vendor.models import Vendor
 
 def category_image_path(instance, filename):
     return "categories/{}/{}/{}".format(instance.id, instance.name, filename)
@@ -41,6 +42,7 @@ class Product(models.Model):
     color = models.CharField(max_length=7, default='#FFFFFF', blank=True)
     size = models.CharField(max_length=100, blank=True)
     tags = TaggableManager()
+    vendor = models.ForeignKey(Vendor, max_length=100, blank=True, null=True, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name

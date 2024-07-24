@@ -7,6 +7,8 @@ from rest_framework.response import Response #type: ignore
 from django.shortcuts import get_object_or_404
 from .Helper_function import apply_product_filters
 from rest_framework.permissions import AllowAny #type: ignore
+from vendor.permissions import IsStaffUser
+from rest_framework import permissions #type: ignore
 
 # Use logging to capture exceptions for better debugging.
 logger = logging.getLogger(__name__)
@@ -48,6 +50,102 @@ class ProductViewSet(viewsets.ModelViewSet):
             return Response({'error': 'Product not found'}, status=404)
         except Exception as e:
             logger.error(f"Error retrieving similar products: {str(e)}")
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    def get_queryset(self):
+        """
+        Return a filtered queryset of products based on the vendor.
+        If the user is authenticated and is a vendor, only products for that vendor are returned.
+        Otherwise, all products are returned.
+
+        Returns:
+            QuerySet: A queryset of products filtered by vendor if authenticated and a vendor, or all products.
+        """
+        if self.request.user.is_authenticated:
+            return Product.objects.filter(vendor=self.request.user.vendor)
+        return Product.objects.all()
+
+    @action(detail=False, methods=['post'], permission_classes=[permissions.IsAuthenticated, IsStaffUser])
+    def create_product(self, request, *args, **kwargs) -> Response:
+        """
+        Create a new product. Only accessible by staff users who are also vendors.
+
+        Args:
+            request (Request): The request object containing product data.
+
+        Returns:
+            Response: The created product data or an error message if the user is not a vendor.
+        """
+        try:
+            if not request.user.is_staff:
+                return Response({'error': 'Only vendors can create products.'}, status=status.HTTP_403_FORBIDDEN)
+            
+            data = request.data.copy()
+            if hasattr(request.user, 'vendor'):
+                data['vendor'] = request.user.vendor.id
+            else:
+                return Response({'error': 'User is not a vendor.'}, status=status.HTTP_400_BAD_REQUEST)
+            serializer = ProductSerializer(data=data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            logger.error(f"Error creating product: {str(e)}")
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    @action(detail=True, methods=['put'], permission_classes=[permissions.IsAuthenticated])
+    def update_product(self, request, pk=None) -> Response:
+        """
+        Update an existing product. Only accessible by staff users who are also vendors.
+
+        Args:
+            request (Request): The request object containing updated product data.
+            pk (int): The ID of the product to be updated.
+
+        Returns:
+            Response: The updated product data or an error message if the product is not found or the user is not a vendor.
+        """
+        try:
+            if not request.user.is_staff:
+                return Response({'error': 'Only vendors can update products.'}, status=status.HTTP_403_FORBIDDEN)
+            
+            product = self.get_object()
+            data = request.data.copy()
+            if hasattr(request.user, 'vendor'):
+                data['vendor'] = request.user.vendor.id
+            serializer = ProductSerializer(product, data=data, partial=True)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Product.DoesNotExist:
+            return Response({'error': 'Product not found'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            logger.error(f"Error updating product: {str(e)}")
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        
+    @action(detail=True, methods=['delete'], permission_classes=[permissions.IsAuthenticated])
+    def delete_product(self, request, pk=None) -> Response:
+        """
+        Delete an existing product. Only accessible by staff users who are also vendors.
+
+        Args:
+            request (Request): The request object.
+            pk (int): The ID of the product to be deleted.
+
+        Returns:
+            Response: A success message if the product is deleted or an error message if the product is not found or the user is not a vendor.
+        """
+        try:
+            if not request.user.is_staff:
+                return Response({'error': 'Only vendors can delete products.'}, status=status.HTTP_403_FORBIDDEN)
+            product = self.get_object()  # Retrieves the product based on pk
+            product.delete()
+            return Response({'message': 'Product deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
+        except Product.DoesNotExist:
+            return Response({'error': 'Product not found'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            logger.error(f"Error deleting product: {str(e)}")
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 

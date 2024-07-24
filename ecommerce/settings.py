@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'account.apps.AccountConfig',
     'Ratings',
     'wishlist',
+    'vendor',
 ]
 
 MIDDLEWARE = [
