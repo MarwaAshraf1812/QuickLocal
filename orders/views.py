@@ -172,3 +172,28 @@ class OrderViewSet(viewsets.ViewSet):
             return Response({'message': 'Order deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
         except Order.DoesNotExist:
             return Response({'message': 'Order not found'}, status=status.HTTP_404_NOT_FOUND)
+
+
+    @action(detail=True, methods=['put'])
+    def update_order_status(self, request, pk=None) -> Response:
+        """
+        Update the status of an existing order.
+
+        Args:
+            request (Request): The request object containing the updated order status.
+            pk (str): The primary key of the order.
+        Returns:
+            Response: A response object indicating whether the status was updated successfully
+        """
+        try:
+            order = Order.objects.get(pk=pk)  # Direct query for debugging
+            order_status = request.data.get('order_status')
+            if order_status:
+                order.order_status = order_status
+                order.save()
+                return Response({'message': 'Order status updated successfully'}, status=status.HTTP_200_OK)
+            return Response({'error': 'Status not provided'}, status=status.HTTP_400_BAD_REQUEST)
+        except Order.DoesNotExist:
+            return Response({'error': 'Order not found'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
