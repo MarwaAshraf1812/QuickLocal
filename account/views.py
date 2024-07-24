@@ -1,15 +1,15 @@
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.response import Response
+from rest_framework.decorators import api_view, permission_classes #type: ignore
+from rest_framework.response import Response #type: ignore
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
-from rest_framework import status
+from rest_framework import status #type: ignore
 from .models import UserProfile
 from .serializers import (
     SignUpSerializer, UserSerializer, UserProfileSerializer,
     ChangePasswordSerializer)
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated, AllowAny #type: ignore
 from django.contrib.auth import authenticate
-from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.tokens import RefreshToken #type: ignore
 import logging
 from django.utils.crypto import get_random_string
 from django.core.mail import send_mail
@@ -21,8 +21,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.tokens import default_token_generator
 from django.utils import timezone
-from rest_framework_simplejwt.views import TokenRefreshView
-from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.views import TokenRefreshView #type: ignore
+from rest_framework_simplejwt.tokens import RefreshToken #type: ignore
 
 logger = logging.getLogger(__name__)
 
