@@ -1,0 +1,53 @@
++------------+        +--------------+        +-----------+
+|   Product  |<-------| SubCategory  |<-------|  Category |
++------------+        +--------------+        +-----------+
+| id         |        | id           |        | id        |
+| name       |        | name         |        | name      |
+| description|        | category_id  |        | description|
+| price      |        | created_at   |        | created_at|
+| category_id|        | updated_at   |        | updated_at|
+| created_at |        +--------------+        +-----------+
+| updated_at |                                
++------------+                                
+       |
+       |
+       v
++--------------+
+|   CartItem   |
++--------------+
+| cart_id      |
+| product_id   |
+| quantity     |
+| price        |
+| total_price  |
++--------------+
+       ^
+       |
+       |
++------v------+
+|    Cart     |
++-------------+
+| session_id  |
++-------------+
+
+
+
+DFD =>
+        +-----------+                 +---------------+
+        |   User    |                 | Product       |
+        |           |                 | Database      |
+        +----+------+                 +--------+------+
+             |                               /|\
+             |                                |
+             v                                |
+   +---------+---------+                      |
+   |    Cart System    |<----------------------+
+   |                   |
+   +---+------+--------+
+       |      |
+       |      |
+       v      v
++-------+    +--------+
+|  Add  |    | Remove |
+|  Item |    | Item   |
++-------+    +--------+
