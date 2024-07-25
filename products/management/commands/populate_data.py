@@ -1,7 +1,16 @@
 from django.core.management.base import BaseCommand
 from products.models import Category, SubCategory, Product
-from taggit.models import Tag
+from taggit.models import Tag #type: ignore
 from django.core.files.uploadedfile import SimpleUploadedFile
+import os
+
+def category_image_path(instance, filename):
+    extension = os.path.splitext(filename)[1]
+    return f"categories/{instance.id}/{instance.name}{extension}"
+
+def product_image_path(instance, filename):
+    extension = os.path.splitext(filename)[1]
+    return f"products/{instance.category}/{instance.name}{extension}"
 
 class Command(BaseCommand):
     help = 'Populate database with dummy data'
@@ -60,6 +69,17 @@ class Command(BaseCommand):
 
         for product_data in products_data:
             subcategory = SubCategory.objects.get(name=product_data["subcategory"])
+
+            # Create a sample image file path with extension
+            file_name = f'{product_data["name"]}.jpg'  # You can change this to other extensions if needed
+            file_extension = os.path.splitext(file_name)[1].lower()
+            content_type_map = {
+                'jpg': 'image/jpeg',
+                'jpeg': 'image/jpeg',
+                'png': 'image/png',
+            }
+            content_type = content_type_map.get(file_extension, 'application/octet-stream')
+
             product, created = Product.objects.get_or_create(
                 name=product_data["name"],
                 description=product_data["description"],
@@ -72,7 +92,7 @@ class Command(BaseCommand):
                     "status": 'Available',
                     "color": '#FFFFFF',
                     "size": 'M',
-                    "image": SimpleUploadedFile(name=f'{product_data["name"]}.jpg', content=b'', content_type='image/jpeg')
+                    "image": SimpleUploadedFile(name=file_name, content=b'', content_type=content_type)
                 }
             )
             if created:
