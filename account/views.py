@@ -1,4 +1,5 @@
-from rest_framework.decorators import api_view, permission_classes #type: ignore
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
+from rest_framework_simplejwt.authentication import JWTAuthentication #type: ignore
 from rest_framework.response import Response #type: ignore
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
@@ -21,8 +22,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.tokens import default_token_generator
 from django.utils import timezone
-from rest_framework_simplejwt.views import TokenRefreshView #type: ignore
-from rest_framework_simplejwt.tokens import RefreshToken #type: ignore
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
+from rest_framework_simplejwt.views import TokenRefreshView
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 
 logger = logging.getLogger(__name__)
 
@@ -112,7 +116,6 @@ def login(request):
     email = request.data.get('email')
     password = request.data.get('password')
 
-    # Check if email and password are provided
     if not email or not password:
         return Response({'error': 'Both email and password are required.'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -121,39 +124,39 @@ def login(request):
     except User.DoesNotExist:
         return Response({'error': 'User with this email does not exist.'}, status=status.HTTP_404_NOT_FOUND)
 
-    # Check if the user is active (email verified)
     if not user.is_active:
         return Response({'error': 'Please verify your email before logging in.'}, status=status.HTTP_401_UNAUTHORIZED)
 
-    # Authenticate user using email and password
     user = authenticate(request, username=email, password=password)
 
     if user is None:
         return Response({'error': 'Invalid email or password'}, status=status.HTTP_401_UNAUTHORIZED)
 
-    # Generate tokens for the authenticated user
+    # Generate new tokens
     refresh = RefreshToken.for_user(user)
+    access_token = str(refresh.access_token)
 
-    # Modification: Set tokens as cookies
     response = Response({
         'refresh': str(refresh),
-        'access': str(refresh.access_token),
-        'redirect': '/profile/'  # URL to redirect to profile page
+        'access': access_token,
+        'redirect': '/profile/'
     }, status=status.HTTP_200_OK)
+    
+    # Set new tokens in cookies
     response.set_cookie(
         key='access_token',
-        value=str(refresh.access_token),
+        value=access_token,
         httponly=True,
-        secure=False, # Set to False for testing on http otherwise must be true on production
-        samesite='Lax',
-        max_age=3600,  # 1 hour
+        secure=settings.SESSION_COOKIE_SECURE,
+        samesite=settings.SESSION_COOKIE_SAMESITE,
+        max_age=300,  # 1 hour
     )
     response.set_cookie(
         key='refresh_token',
         value=str(refresh),
         httponly=True,
-        secure=False, # Set to False for testing on http otherwise must be true on production
-        samesite='Lax',
+        secure=settings.SESSION_COOKIE_SECURE,
+        samesite=settings.SESSION_COOKIE_SAMESITE,
         max_age=3600 * 24 * 10,  # 10 days
     )
 
@@ -206,25 +209,23 @@ def current_user(request):
         return Response({'error': 'An error occurred while retrieving user details.'}, status=500)
 
 
-@login_required
+@api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
 def profile_view(request):
     profile, created = UserProfile.objects.get_or_create(user=request.user)
 
     if request.method == 'POST':
-        data = request.POST
-        files = request.FILES
-        serializer = UserProfileSerializer(profile, data=data, files=files, partial=True)
+        serializer = UserProfileSerializer(profile, data=request.data, partial=True)
 
         if serializer.is_valid():
             serializer.save()
-            messages.success(request, 'Your profile has been updated successfully!')
-            return redirect('profile_view')
+            return Response({'message': 'Your profile has been updated successfully!'}, status=status.HTTP_200_OK)
         else:
-            messages.error(request, 'Please correct the error below.')
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    else:
+
+    elif request.method == 'GET':
         serializer = UserProfileSerializer(profile)
-        return render(request, 'profile.html', {'profile': serializer.data})
+        return Response(serializer.data)
 
 
 @api_view(['POST'])
@@ -288,36 +289,89 @@ def change_password(request):
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
+@authentication_classes([JWTAuthentication])
 def logout(request):
-    refresh_token = request.data.get('refresh_token')
+    # Retrieve the refresh token from cookies
+    refresh_token = request.COOKIES.get('refresh_token')
 
     if not refresh_token:
         return Response({'error': 'Refresh token is required'}, status=status.HTTP_400_BAD_REQUEST)
 
     try:
+        # Create RefreshToken instance and blacklist it
         token = RefreshToken(refresh_token)
-        token.blacklist()
+        token.blacklist()  # Ensure blacklisting is supported in your configuration
 
-        # Modification: Clear tokens from cookies
+        # Clear tokens from cookies
         response = Response({'success': 'User logged out successfully'}, status=status.HTTP_200_OK)
-        response.delete_cookie('access_token')
-        response.delete_cookie('refresh_token')
+
+        # Delete cookies by setting expired values
+        response.set_cookie(
+            key='access_token',
+            value='',
+            httponly=True,
+            secure=settings.SESSION_COOKIE_SECURE,
+            samesite=settings.SESSION_COOKIE_SAMESITE,
+            expires='Thu, 01 Jan 1970 00:00:00 GMT',
+        )
+        response.set_cookie(
+            key='refresh_token',
+            value='',
+            httponly=True,
+            secure=settings.SESSION_COOKIE_SECURE,
+            samesite=settings.SESSION_COOKIE_SAMESITE,
+            expires='Thu, 01 Jan 1970 00:00:00 GMT',
+        )
 
         return response
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-class CustomTokenRefreshView(TokenRefreshView):
+@method_decorator(csrf_exempt, name='dispatch')
+class CookieTokenRefreshView(TokenRefreshView):
     def post(self, request, *args, **kwargs):
-        response = super().post(request, *args, **kwargs)
-        if response.status_code == 200:
-            response.set_cookie(
-                key='access_token',
-                value=response.data['access'],
-                httponly=True,
-                secure=True,
-                samesite='Lax',
-                max_age=3600,  # 1 hour
-            )
+        refresh_token = request.COOKIES.get('refresh_token')
+        if not refresh_token:
+            return Response({"detail": "Refresh token not found in cookies."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        data = {'refresh': refresh_token}
+        serializer = self.get_serializer(data=data)
+        try:
+            serializer.is_valid(raise_exception=True)
+            return self._check_token(serializer)
+        except TokenError as e:
+            return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    
+    def _check_token(self, serializer):
+        try:
+            validated_data = serializer.validated_data
+        except Exception as e:
+            return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
+        response = Response(validated_data, status=status.HTTP_200_OK)
+        
+        # Delete old cookies
+        response.delete_cookie('access_token')
+        response.delete_cookie('refresh_token')
+        
+        # Set new tokens in cookies
+        response.set_cookie(
+            key='access_token',
+            value=validated_data['access'],
+            httponly=True,
+            secure=False,   # Update to True in production
+            samesite='Lax',
+            path='/',
+            max_age=3600    # Set cookie expiration as needed
+        )
+        response.set_cookie(
+            key='refresh_token',
+            value=validated_data['refresh'],
+            httponly=True,
+            secure=False,   # Update to True in production
+            samesite='Lax',
+            path='/',
+            max_age=3600 * 24 * 10  # Set cookie expiration as needed
+        )
         return response
