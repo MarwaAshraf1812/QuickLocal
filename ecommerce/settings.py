@@ -58,6 +58,9 @@ INSTALLED_APPS = [
     'account.apps.AccountConfig',
     'Ratings',
     'wishlist',
+    'vendor',
+    'support',
+    'notifications',
 ]
 
 MIDDLEWARE = [
@@ -73,15 +76,29 @@ MIDDLEWARE = [
     
     ]
 
-# Ensure HTTPS is used for secure cookies
+CSRF_TRUSTED_ORIGINS = ['http://localhost:8000', 'https://yourdomain.com']  # Add your frontend domain
+CORS_ALLOW_CREDENTIALS = True
+CORS_ORIGIN_ALLOW_ALL = False  # More secure to list explicitly
+CORS_ORIGIN_WHITELIST = [
+    'http://localhost:8000',  # frontend domain for local development
+    # Add other domains as needed
+]
+
+# Secure cookie settings
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
+
+# Custom settings
+SECURE_HSTS_SECONDS = 31536000
+SECURE_HSTS_PRELOAD = True
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'DENY'
 
 # Use Lax for SameSite attribute on cookies
 SESSION_COOKIE_SAMESITE = 'Lax'
 CSRF_COOKIE_SAMESITE = 'Lax'
-
-CORS_ALLOW_ALL_ORIGINS = True
 
 CART_SESSION_ID = 'cart'
 
@@ -190,7 +207,6 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = '/static/'
-
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Default primary key field type

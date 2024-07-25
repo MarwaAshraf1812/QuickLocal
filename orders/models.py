@@ -13,7 +13,7 @@ class Order(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    paid = models.BooleanField(default=False)
+    order_status = models.CharField(max_length=50, default='pending')
     
     class Meta:
         ordering = ['-created']
