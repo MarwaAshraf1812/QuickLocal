@@ -3,7 +3,7 @@ from rest_framework.response import Response #type: ignore
 from rest_framework.decorators import action #type: ignore
 from rest_framework import status #type: ignore
 from cart.serializers import CartSerializer
-from cart.models import Cart
+from cart.models import CartItem
 from products.models import Product
 from .models import Order, OrderItem
 from .serializers import OrderSerializer, CreateOrderSerializer, UpdateOrderSerializer
@@ -18,7 +18,7 @@ class OrderViewSet(viewsets.ViewSet):
     retrieval, updating, and deletion of orders.
     """
     @action(detail=False, methods=['post'])
-    def create_order(self, request)-> Response:
+    def create_order(self, request) -> Response:
         """
         Create an order from cart items and return the total amount, total items, and Stripe client secret.
         
@@ -33,33 +33,39 @@ class OrderViewSet(viewsets.ViewSet):
 
         stripe_token = order_data.pop('stripe_token')
         user = request.user
-        items = order_data.pop('items')
+
+        # Extract items from the user's cart
+        cart_items = CartItem.objects.filter(cart__user=user)
+        if not cart_items.exists():
+            return Response({'error': 'Cart is empty'}, status=status.HTTP_400_BAD_REQUEST)
 
         # Create Order object
         order = Order.objects.create(user=user, **order_data)
 
         total_amount = 0
         total_items = 0
-        for item in items:
-            try:
-                product = Product.objects.get(id=item['product'])
-            except Product.DoesNotExist:
-                return Response({'message': 'Product not found'}, status=status.HTTP_404_NOT_FOUND)
+        order_items = []
 
+        for item in cart_items:
+            # Create OrderItem object for each cart item
             order_item = OrderItem.objects.create(
                 order=order,
-                product=product,
-                quantity=item['quantity'],
-                price=item['price']
+                product=item.product,
+                quantity=item.quantity,
+                price=item.product.price  # Assuming price comes from product
             )
             total_amount += order_item.quantity * order_item.price
             total_items += order_item.quantity
 
+            # Add to the list of order items
+            order_items.append({
+                'product': item.product.id,
+                'quantity': item.quantity,
+                'price': item.product.price
+            })
+
         order.total_amount = total_amount
         order.save()
-
-        # Clear the cart (assuming cart clearing is intended)
-        Cart.objects.filter(user=user).delete()
 
         # Create a Stripe PaymentIntent
         try:
@@ -71,11 +77,18 @@ class OrderViewSet(viewsets.ViewSet):
                 metadata={'order_id': order.id},
                 automatic_payment_methods={
                     'enabled': True,
-                    'allow_redirects': 'never'  # Allow redirects for payment methods that need them
+                    'allow_redirects': 'never'  # Disable redirects
                 },
             )
         except stripe.error.StripeError as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Update order status upon successful payment)
+        if intent.status == 'succeeded':
+            order.order_status = 'paid'
+            order.save()
+            # Clear the cart
+            CartItem.objects.filter(cart__user=user).delete()
 
         # Serialize the order
         order_serializer = OrderSerializer(order)
@@ -83,6 +96,7 @@ class OrderViewSet(viewsets.ViewSet):
             'order': order_serializer.data,
             'total_amount': str(total_amount),
             'total_items': total_items,
+            'order_items': order_items,  # Include the order items in the response
             'client_secret': intent.client_secret
         }, status=status.HTTP_201_CREATED)
 
