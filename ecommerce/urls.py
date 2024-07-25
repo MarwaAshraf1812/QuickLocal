@@ -28,4 +28,7 @@ urlpatterns = [
     path('', include('Ratings.urls')),
     path('', include('wishlist.urls')),
     path('', include('orders.urls')),
+    path('', include('vendor.urls')),
+    path('', include('support.urls')),
+    path('', include('notifications.urls')),
 ]

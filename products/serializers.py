@@ -2,6 +2,8 @@ from rest_framework import serializers #type: ignore
 from .models import Category, SubCategory, Product
 
 class ProductSerializer(serializers.ModelSerializer):
+    category = serializers.PrimaryKeyRelatedField(queryset=SubCategory.objects.all())
+
     class Meta:
         model = Product
         fields = '__all__'

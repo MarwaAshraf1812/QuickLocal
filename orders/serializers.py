@@ -10,13 +10,13 @@ class OrderItemSerializer(serializers.ModelSerializer):
         fields = ['product', 'quantity', 'price']
 
 class OrderSerializer(serializers.ModelSerializer):
-    items = OrderItemSerializer(many=True, read_only=True)
+    # items = OrderItemSerializer(many=True, read_only=True)
     total_amount = serializers.SerializerMethodField()
     total_items = serializers.SerializerMethodField()
 
     class Meta:
         model = Order
-        fields = ['id', 'first_name', 'last_name', 'email', 'address', 'postal_code', 'city', 'total_amount', 'total_items', 'items']
+        fields = ['id', 'first_name', 'last_name', 'email', 'address', 'postal_code', 'city', 'total_amount', 'total_items']
 
     def get_total_amount(self, obj):
         return str(obj.total_amount)  # Ensure the amount is returned as a string
@@ -36,7 +36,6 @@ class CreateOrderSerializer(serializers.Serializer):
     address = serializers.CharField(max_length=250)
     postal_code = serializers.CharField(max_length=20)
     city = serializers.CharField(max_length=100)
-    items = OrderItemInputSerializer(many=True)
     stripe_token = serializers.CharField(max_length=255)
 
     def validate_items(self, value):

@@ -14,4 +14,5 @@ urlpatterns = [
     path('order_detail/<int:pk>/', OrderViewSet.as_view({'get': 'order_detail'}), name='order_detail'),
     path('update_order/<int:pk>/', OrderViewSet.as_view({'put': 'update_order'}), name='update_order'),
     path('delete_order/<int:pk>/', OrderViewSet.as_view({'delete': 'delete_order'}), name='delete_order'),
+    path('update_order_status/<int:pk>/', OrderViewSet.as_view({'put': 'update_order_status'}), name='update_order_status'),
 ]
