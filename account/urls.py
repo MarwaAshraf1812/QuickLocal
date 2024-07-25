@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import register, login, activate, current_user, resend_verification_email, profile_view, forget_password, reset_password, change_password, logout, CustomTokenRefreshView
+from .views import register, login, activate, current_user, resend_verification_email, profile_view, forget_password, reset_password, change_password, logout, CookieTokenRefreshView
 
 urlpatterns = [
     path('register/', register, name='register'),
@@ -12,5 +12,5 @@ urlpatterns = [
     path('reset-password/<int:uid>/<str:token>/', reset_password, name='reset_password'),
     path('change-password/', change_password, name='change_password'),
     path('logout/', logout, name='logout'),
-    path('token/refresh/', CustomTokenRefreshView.as_view(), name='token_refresh'),
+    path('token/refresh/', CookieTokenRefreshView.as_view(), name='token_refresh'),
 ]

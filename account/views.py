@@ -21,8 +21,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.tokens import default_token_generator
 from django.utils import timezone
-from rest_framework_simplejwt.views import TokenRefreshView
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
+from rest_framework_simplejwt.views import TokenRefreshView
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 
 logger = logging.getLogger(__name__)
 
@@ -133,27 +136,29 @@ def login(request):
 
     # Generate tokens for the authenticated user
     refresh = RefreshToken.for_user(user)
+    access_token = str(refresh.access_token)
 
     # Modification: Set tokens as cookies
     response = Response({
         'refresh': str(refresh),
-        'access': str(refresh.access_token),
-        'redirect': '/profile/'  # URL to redirect to profile page
+        'access': access_token,
+        'redirect': '/profile/'
     }, status=status.HTTP_200_OK)
+    
     response.set_cookie(
         key='access_token',
-        value=str(refresh.access_token),
+        value=access_token,
         httponly=True,
-        secure=False, # Set to False for testing on http otherwise must be true on production
-        samesite='Lax',
-        max_age=3600,  # 1 hour
+        secure=settings.SESSION_COOKIE_SECURE,
+        samesite=settings.SESSION_COOKIE_SAMESITE,
+        max_age=300,  # 1 hour
     )
     response.set_cookie(
         key='refresh_token',
         value=str(refresh),
         httponly=True,
-        secure=False, # Set to False for testing on http otherwise must be true on production
-        samesite='Lax',
+        secure=settings.SESSION_COOKIE_SECURE,
+        samesite=settings.SESSION_COOKIE_SAMESITE,
         max_age=3600 * 24 * 10,  # 10 days
     )
 
@@ -206,25 +211,23 @@ def current_user(request):
         return Response({'error': 'An error occurred while retrieving user details.'}, status=500)
 
 
-@login_required
+@api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
 def profile_view(request):
     profile, created = UserProfile.objects.get_or_create(user=request.user)
 
     if request.method == 'POST':
-        data = request.POST
-        files = request.FILES
-        serializer = UserProfileSerializer(profile, data=data, files=files, partial=True)
+        serializer = UserProfileSerializer(profile, data=request.data, partial=True)
 
         if serializer.is_valid():
             serializer.save()
-            messages.success(request, 'Your profile has been updated successfully!')
-            return redirect('profile_view')
+            return Response({'message': 'Your profile has been updated successfully!'}, status=status.HTTP_200_OK)
         else:
-            messages.error(request, 'Please correct the error below.')
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    else:
+
+    elif request.method == 'GET':
         serializer = UserProfileSerializer(profile)
-        return render(request, 'profile.html', {'profile': serializer.data})
+        return Response(serializer.data)
 
 
 @api_view(['POST'])
@@ -287,9 +290,10 @@ def change_password(request):
 
 
 @api_view(['POST'])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def logout(request):
-    refresh_token = request.data.get('refresh_token')
+    # Retrieve refresh token from cookies
+    refresh_token = request.COOKIES.get('refresh_token')
 
     if not refresh_token:
         return Response({'error': 'Refresh token is required'}, status=status.HTTP_400_BAD_REQUEST)
@@ -298,26 +302,58 @@ def logout(request):
         token = RefreshToken(refresh_token)
         token.blacklist()
 
-        # Modification: Clear tokens from cookies
         response = Response({'success': 'User logged out successfully'}, status=status.HTTP_200_OK)
         response.delete_cookie('access_token')
         response.delete_cookie('refresh_token')
 
         return response
+    except TokenError as e:
+        return Response({'error': 'Invalid refresh token'}, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-class CustomTokenRefreshView(TokenRefreshView):
+@method_decorator(csrf_exempt, name='dispatch')
+class CookieTokenRefreshView(TokenRefreshView):
     def post(self, request, *args, **kwargs):
-        response = super().post(request, *args, **kwargs)
-        if response.status_code == 200:
-            response.set_cookie(
-                key='access_token',
-                value=response.data['access'],
-                httponly=True,
-                secure=True,
-                samesite='Lax',
-                max_age=3600,  # 1 hour
-            )
+        refresh_token = request.COOKIES.get('refresh_token')
+        if not refresh_token:
+            return Response({"detail": "Refresh token not found in cookies."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        data = {'refresh': refresh_token}
+        serializer = self.get_serializer(data=data)
+        try:
+            serializer.is_valid(raise_exception=True)
+            return self._check_token(serializer)
+        except TokenError as e:
+            return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    
+    def _check_token(self, serializer):
+        try:
+            validated_data = serializer.validated_data
+        except Exception as e:
+            return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
+        response = Response(validated_data, status=status.HTTP_200_OK)
+        
+        # Delete old cookies
+        response.delete_cookie('access_token')
+        response.delete_cookie('refresh_token')
+        
+        # Set new tokens in cookies
+        response.set_cookie(
+            key='access_token',
+            value=validated_data['access'],
+            httponly=True,
+            secure=False,   # Ensures the cookie is sent only over HTTPS
+            samesite='Lax' # Prevents the cookie from being sent along with cross-site requests
+        )
+        response.set_cookie(
+            key='refresh_token',
+            value=validated_data['refresh'],
+            httponly=True,
+            secure=False,
+            samesite='Lax'
+        )
+        
         return response
