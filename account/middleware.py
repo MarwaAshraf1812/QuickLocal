@@ -33,6 +33,6 @@ class TokenRefreshMiddleware(MiddlewareMixin):
                 httponly=True,
                 secure=True,  # Set to True in production
                 samesite='Lax',
-                max_age=3600
+                max_age=300
             )
         return response

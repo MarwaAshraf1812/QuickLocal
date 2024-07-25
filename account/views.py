@@ -1,4 +1,5 @@
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
@@ -115,7 +116,6 @@ def login(request):
     email = request.data.get('email')
     password = request.data.get('password')
 
-    # Check if email and password are provided
     if not email or not password:
         return Response({'error': 'Both email and password are required.'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -124,27 +124,25 @@ def login(request):
     except User.DoesNotExist:
         return Response({'error': 'User with this email does not exist.'}, status=status.HTTP_404_NOT_FOUND)
 
-    # Check if the user is active (email verified)
     if not user.is_active:
         return Response({'error': 'Please verify your email before logging in.'}, status=status.HTTP_401_UNAUTHORIZED)
 
-    # Authenticate user using email and password
     user = authenticate(request, username=email, password=password)
 
     if user is None:
         return Response({'error': 'Invalid email or password'}, status=status.HTTP_401_UNAUTHORIZED)
 
-    # Generate tokens for the authenticated user
+    # Generate new tokens
     refresh = RefreshToken.for_user(user)
     access_token = str(refresh.access_token)
 
-    # Modification: Set tokens as cookies
     response = Response({
         'refresh': str(refresh),
         'access': access_token,
         'redirect': '/profile/'
     }, status=status.HTTP_200_OK)
     
+    # Set new tokens in cookies
     response.set_cookie(
         key='access_token',
         value=access_token,
@@ -290,25 +288,42 @@ def change_password(request):
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
+@authentication_classes([JWTAuthentication])
 def logout(request):
-    # Retrieve refresh token from cookies
+    # Retrieve the refresh token from cookies
     refresh_token = request.COOKIES.get('refresh_token')
 
     if not refresh_token:
         return Response({'error': 'Refresh token is required'}, status=status.HTTP_400_BAD_REQUEST)
 
     try:
+        # Create RefreshToken instance and blacklist it
         token = RefreshToken(refresh_token)
-        token.blacklist()
+        token.blacklist()  # Ensure blacklisting is supported in your configuration
 
+        # Clear tokens from cookies
         response = Response({'success': 'User logged out successfully'}, status=status.HTTP_200_OK)
-        response.delete_cookie('access_token')
-        response.delete_cookie('refresh_token')
+
+        # Delete cookies by setting expired values
+        response.set_cookie(
+            key='access_token',
+            value='',
+            httponly=True,
+            secure=settings.SESSION_COOKIE_SECURE,
+            samesite=settings.SESSION_COOKIE_SAMESITE,
+            expires='Thu, 01 Jan 1970 00:00:00 GMT',
+        )
+        response.set_cookie(
+            key='refresh_token',
+            value='',
+            httponly=True,
+            secure=settings.SESSION_COOKIE_SECURE,
+            samesite=settings.SESSION_COOKIE_SAMESITE,
+            expires='Thu, 01 Jan 1970 00:00:00 GMT',
+        )
 
         return response
-    except TokenError as e:
-        return Response({'error': 'Invalid refresh token'}, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -345,15 +360,18 @@ class CookieTokenRefreshView(TokenRefreshView):
             key='access_token',
             value=validated_data['access'],
             httponly=True,
-            secure=False,   # Ensures the cookie is sent only over HTTPS
-            samesite='Lax' # Prevents the cookie from being sent along with cross-site requests
+            secure=False,   # Update to True in production
+            samesite='Lax',
+            path='/',
+            max_age=3600    # Set cookie expiration as needed
         )
         response.set_cookie(
             key='refresh_token',
             value=validated_data['refresh'],
             httponly=True,
-            secure=False,
-            samesite='Lax'
+            secure=False,   # Update to True in production
+            samesite='Lax',
+            path='/',
+            max_age=3600 * 24 * 10  # Set cookie expiration as needed
         )
-        
         return response
