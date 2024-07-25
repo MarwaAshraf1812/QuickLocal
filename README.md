@@ -1,6 +1,6 @@
 # QuickLocal
 
-QuickLocal is an advanced e-commerce platform designed to deliver a seamless online shopping experience. The system is built using Django and Django REST Framework, providing a robust backend to support various e-commerce functionalities, including product management, cart operations, order processing, vendor management, and user accounts.
+QuickLocal is an advanced e-commerce platform designed to deliver a seamless online shopping experience. The system is built using Django and Django REST Framework, providing a robust backend to support various e-commerce functionalities, including product management, cart operations, order processing, vendor management, notifications, and user accounts.
 
 ## Table of Contents
 
@@ -13,6 +13,8 @@ QuickLocal is an advanced e-commerce platform designed to deliver a seamless onl
    - [Order Endpoints](#order-endpoints)
    - [Vendor Endpoints](#vendor-endpoints)
    - [Wishlist Endpoints](#wishlist-endpoints)
+   - [Support Endpoints](#support-endpoints)
+   - [Notification Endpoints](#notification-endpoints)
 4. [Error Handling](#error-handling)
 5. [Testing](#testing)
 6. [Installation](#installation)
@@ -21,7 +23,7 @@ QuickLocal is an advanced e-commerce platform designed to deliver a seamless onl
 
 ## 1. Introduction
 
-QuickLocal is designed to manage and streamline various aspects of an e-commerce website. It facilitates product browsing, cart management, order placement, and user account management. Additionally, it allows vendors to manage their product listings and administrators to oversee order processing and user management.
+QuickLocal is designed to manage and streamline various aspects of an e-commerce website. It facilitates product browsing, cart management, order placement, user account management, and provides support and notification features.
 
 ## 2. Features
 
@@ -31,6 +33,8 @@ QuickLocal is designed to manage and streamline various aspects of an e-commerce
 - **Vendor Management**: Vendors can manage their products and view their orders.
 - **Wishlist**: Users can add items to their wishlist for future reference.
 - **User Accounts**: Users can register, log in, and manage their account details.
+- **Support**: Users can send support messages and receive notifications regarding their support requests.
+- **Notifications**: Users receive notifications about significant events like support message updates.
 
 ## 3. API Endpoints
 
@@ -80,6 +84,17 @@ QuickLocal is designed to manage and streamline various aspects of an e-commerce
 - **Add to Wishlist**: `POST /wishlist/add/` - Add an item to the wishlist.
 - **Remove from Wishlist**: `DELETE /wishlist/remove/` - Remove an item from the wishlist.
 
+### Support Endpoints
+
+- **Create Support Message**: `POST /support/` - Send a support message.
+- **Retrieve Support Messages**: `GET /support/` - List all support messages for the authenticated user.
+- **Delete Support Message**: `DELETE /support/{id}/delete_message/` - Delete a specific support message.
+- **Clear All Support Messages**: `DELETE /support/clear_messages/` - Delete all support messages for the authenticated user.
+
+### Notification Endpoints
+
+- **Retrieve Notifications**: `GET /notifications/` - Retrieve notifications for the authenticated user.
+
 ## 4. Error Handling
 
 QuickLocal utilizes Django REST Framework's built-in exception handling and custom error responses for specific scenarios:
@@ -91,7 +106,7 @@ QuickLocal utilizes Django REST Framework's built-in exception handling and cust
 
 ## 5. Testing
 
-To test the API endpoints, use tools like Postman . Below is an example of how to test the `create_order` endpoint:
+To test the API endpoints, use tools like Postman. Below is an example of how to test the `create_order` endpoint:
 
 ### Example Request for `create_order`
 
