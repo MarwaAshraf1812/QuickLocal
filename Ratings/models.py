@@ -19,8 +19,9 @@ class Rating(models.Model):
 
 class Review(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product_reviews')
     review = models.TextField()
+    rating = models.ForeignKey(Rating, on_delete=models.CASCADE, null=True, blank=True, related_name='review_rating')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
