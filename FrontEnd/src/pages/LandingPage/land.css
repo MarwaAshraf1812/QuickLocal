@@ -83,16 +83,22 @@ button {
 
 #categories-section {
   padding: 20px;
+  margin-bottom: 10%;
+
 }
 
-.categories-container {
+#products-section {
+  margin-bottom: 30%;
+}
+
+.categories-container, .products-container {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
   justify-content: center;
 }
 
-.category-card {
+.category-card, .product-card {
   width: 250px;
   height: 300px;
   display: flex;
@@ -108,17 +114,17 @@ button {
   gap: 2rem;
 }
 
-.category-card:hover {
+.category-card:hover, .product-card:hover {
   background-color: #ddd;
 }
 
-.category-card img {
+.category-card img, .product-card img {
   max-width: 100%;
   max-height: 100px;
   object-fit: cover;
 }
 
-.category-card h3 {
+.category-card h3, .product-card h3{
   margin: 10px 0 0;
   font-size: 16px;
 }
