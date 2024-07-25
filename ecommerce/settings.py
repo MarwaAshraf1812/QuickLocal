@@ -78,7 +78,7 @@ MIDDLEWARE = [
 
 CSRF_TRUSTED_ORIGINS = ['http://localhost:8000', 'https://yourdomain.com']  # Add your frontend domain
 CORS_ALLOW_CREDENTIALS = True
-CORS_ORIGIN_ALLOW_ALL = False  # More secure to list explicitly
+CORS_ORIGIN_ALLOW_ALL = True
 CORS_ORIGIN_WHITELIST = [
     'http://localhost:8000',  # frontend domain for local development
     # Add other domains as needed
