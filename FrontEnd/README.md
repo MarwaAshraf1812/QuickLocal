@@ -54,7 +54,7 @@ QuickLocal/
 - navbar/: Contains the navigation bar component.
   - nav.css: Stylesheet for the navigation bar.
   - nav.script.js: Script for the navigation bar.
-footer/: Contains the footer component.
+- footer/: Contains the footer component.
   - footer.css: Stylesheet for the footer.
   - footer.js: Script for the footer.
 - FrontEnd/src/pages/: Directory for individual page components.
