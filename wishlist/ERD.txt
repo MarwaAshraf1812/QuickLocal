@@ -1,0 +1,25 @@
++---------------------+         +---------------------+
+|       User          |         |      Wishlist       |
++---------------------+         +---------------------+
+| id (PK)             |1      *| id (PK)             |
+| username            |--------| user_id (FK)        |
+| email               |         | name                |
+| password            |         | description         |
+| created_at          |         | created_at          |
+| updated_at          |         | updated_at          |
++---------------------+         +---------------------+
+                                    |
+                                    | 1
+                                    |
+                                    | *
+                            +---------------------+
+                            |        Item          |
+                            +---------------------+
+                            | id (PK)             |
+                            | wishlist_id (FK)    |
+                            | product_name        |
+                            | product_description |
+                            | product_price       |
+                            | created_at          |
+                            | updated_at          |
+                            +---------------------+

@@ -1,0 +1,22 @@
+  +-----------+        +------------+
+  |   User    |        |  Product   |
+  +-----------+        +------------+
+  | id        |        | id         |
+  | username  |        | name       |
+  | email     |        | description|
+  | ...       |        | price      |
+  +-----------+        +------------+
+       |                     |
+       |                     |
+       |                     |
+       |                     |
+  +-----------+        +------------+
+  |  Rating   |        |  Review    |
+  +-----------+        +------------+
+  | id        |        | id         |
+  | user_id   |        | user_id    |
+  | product_id|        | product_id |
+  | rating    |        | review_text|
+  | created_at|        | created_at |
+  +-----------+        | rating     |
+                       +------------+
