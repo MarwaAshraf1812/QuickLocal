@@ -62,8 +62,8 @@ figcaption {
   color: #fff;
   text-decoration: underline;
   text-decoration: none;
-  background-color: #5e95fcc4;
-  border: 1px solid #5e95fc;
+  background-color: #2197c9;
+  border: 1px solid #2197c9;
 
   font-size: 18px;
   grid-column: 1;
@@ -102,6 +102,7 @@ figcaption {
   .product-item img {
     grid-column: 1;
     grid-row: 1 / 2;
+    width: 70%;
     height: auto;
     border-radius: 5px;
     margin: auto;

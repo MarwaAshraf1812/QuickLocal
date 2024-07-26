@@ -20,7 +20,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 <h3>${product.name}</h3>
                 <h4 class="price">$${product.price}</h4>
                 ${product.offers ? `<p class="offers">Offers: ${product.offers}</p>` : ''}
-                <a href="../product/product.html?id=${product.id}" class="view-product-btn">View Product</a>
+                <button id="view-product-btn" data-product-id="${product.id}" class="view-product-btn">View Product</button>
+
             `;
 
       productsContainer.appendChild(productCard);
