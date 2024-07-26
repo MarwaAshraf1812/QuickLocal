@@ -1,0 +1,13 @@
++-----------+        +------------+
+|   User    |        |  Profile   |
++-----------+        +------------+
+| id        |<------>| user_id    |
+| username  |        | first_name |
+| email     |        | last_name  |
+| password  |        +------------+
+| first_name|
+| last_name |
+| is_active |
+| is_staff  |
+| date_joined|
++-----------+
