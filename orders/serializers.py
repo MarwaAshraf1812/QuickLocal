@@ -41,12 +41,12 @@ class CreateOrderSerializer(serializers.Serializer):
     def validate_items(self, value):
         # Additional validation for items if needed
         return value
-
+    
     def validate(self, data):
         if not data.get('stripe_token'):
             raise serializers.ValidationError({'stripe_token': 'Payment method is required'})
         return data
-
+    
 class UpdateOrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order

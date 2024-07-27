@@ -19,3 +19,5 @@ class OrderAdmin(admin.ModelAdmin):
     inlines = [OrderItemInline]
     readonly_fields = ['created', 'updated']
     search_fields = ['first_name', 'last_name', 'email', 'address']
+
+
