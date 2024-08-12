@@ -1,0 +1,22 @@
+body {
+    font-family: 'Montserrat', sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
+    margin: 0;
+    padding: 0;
+}
+
+.landing-page {
+    background-size: cover;
+    color: #fff;
+    padding: 5rem 0;
+}
+
+.display-4 {
+    font-size: 3rem;
+    font-weight: 300;
+}
+
+.lead {
+    font-size: 1.25rem;
+}

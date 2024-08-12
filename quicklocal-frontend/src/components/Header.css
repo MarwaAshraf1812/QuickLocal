@@ -1,0 +1,47 @@
+.header {
+    position: relative;
+    z-index: 1000;
+}
+
+.sec-nav {
+    background-color: white!important;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #014f86;
+    margin: 0;
+    cursor: pointer;
+}
+
+.icon {
+    color: #014f86 !important;
+    cursor: pointer;
+}
+
+.input-group .form-control {
+    border-radius: 0;
+    box-shadow: none;
+    border: 1px solid #014f86 !important;
+    border-radius: 10px;
+}
+
+.main-nav {
+    background-color: #014f86 !important;
+}
+
+.nav-link {
+    font-size: 1rem;
+    font-weight: 500;
+    margin: 0 15px;
+    text-decoration: none;
+    color: #f8f9fa;
+    border-radius: 10px;
+}
+
+.nav-link:hover {
+    color: #014f86 !important;
+    background-color: white;
+    border-radius: 10px;
+}
