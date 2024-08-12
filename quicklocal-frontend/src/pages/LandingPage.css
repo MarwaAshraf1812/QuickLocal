@@ -1,0 +1,49 @@
+/* LandingPage.css */
+
+.bg-light {
+    background-color: #f8f9fa;
+}
+span {
+    color: #014f86 ;
+}
+.img-fixed {
+    height: 400px;
+    object-fit: cover;
+    width: 100%;
+    border-radius: 0.5rem;
+}
+
+.container-fluid {
+    padding: 0;
+}
+
+.row {
+    margin: 0;
+}
+
+.col-md-8,
+.col-md-4 {
+    padding: 0;
+}
+
+.overlay-card {
+    position: absolute;
+    top: 50%;
+    left: 35%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 430px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border: 1px solid #ddd;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.overlay-card:hover {
+    background-color: #fff;
+    cursor: pointer;
+}
+
+.card-body {
+    padding: 2.4rem;
+}

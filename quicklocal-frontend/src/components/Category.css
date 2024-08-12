@@ -1,0 +1,36 @@
+/* CategoriesSection.css */
+.category-section {
+    width: 96%;
+    margin-right: 3px;
+}
+.category-card {
+    width: 80%;
+    display: flex;
+    align-items: center;
+    padding: 6px;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+}
+.category-card:hover {
+    background-color: #f9f9f9;
+    cursor: pointer;
+}
+
+.category-image {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 15px;
+}
+
+.category-title {
+    font-size: 1.25rem;
+    color: #333;
+    margin: 0;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
