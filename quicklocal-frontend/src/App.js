@@ -7,6 +7,7 @@ import LandingPage from './pages/LandingPage';
 
 function App() {
   return (
+    <div>
     <div className="App">
       <BrowserRouter>
         <Header />
@@ -18,6 +19,8 @@ function App() {
           <Route path="/contactUs" element={<h1>contact</h1>} />
         </Routes>
       </BrowserRouter>
+      </div>
+      
     </div>
   );
 }
