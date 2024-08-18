@@ -3,7 +3,12 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import kitchenImage from '../assets/kitchen.jpg';
 import clothesImage from '../assets/clothes.jpg';
 import CategoriesSection from '../components/Category';
+import CategorySliderSection from '../components/CategorySliderSection';
+import OffersSection from '../components/OffersSection';
+import ProductsSection from '../components/ProductsSection';
+import Footer from '../components/Footer';
 import './LandingPage.css';
+import ContactUs from "../components/ContactUs";
 
 const LandingPage = () => {
     return (
@@ -15,10 +20,10 @@ const LandingPage = () => {
                         alt="Food"
                         className="img-fixed"
                     />
-                    <div className="card overlay-card">
-                        <div className="card-body">
-                            <h2 className="card-title">Welcome to the <span>Quick Local</span></h2>
-                            <p className="card-text">Grab Upto 50% off On Selected Kitchens Products</p>
+                    <div className="card landing-overlay-card">
+                        <div className="landing-card-body">
+                            <h2 className="landing-card-title">Welcome to the <span>Quick Local</span></h2>
+                            <p className="landing-card-tex">Grab Upto 50% off On Selected Kitchens Products</p>
                         </div>
                     </div>
                 </div>
@@ -30,8 +35,25 @@ const LandingPage = () => {
                     />
                 </div>
             </div>
-            <div className="row category">
+            <div className="ms-5">
                 <CategoriesSection />
+            </div>
+            <div className="categories-section">
+                <CategorySliderSection />
+            </div>
+            <div className="my-5 py-5 offers-section">
+                <OffersSection/>
+            </div>
+            <div className="my-5 products-section">
+                <ProductsSection />
+            </div>
+
+            <div className="contactus-section mb-4">
+                <ContactUs />
+            </div>
+
+            <div className="">
+                <Footer />
             </div>
         </div>
     );

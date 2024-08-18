@@ -3,7 +3,7 @@ from rest_framework.decorators import action # type: ignore
 from rest_framework.response import Response # type: ignore
 from .models import SupportMessage
 from .serializers import SupportMessageSerializer
-from rest_framework.permissions import IsAuthenticated # type: ignore
+from rest_framework.permissions import IsAuthenticated, AllowAny # type: ignore
 
 class SupportMessageViewSet(viewsets.ModelViewSet):
     """
@@ -15,7 +15,7 @@ class SupportMessageViewSet(viewsets.ModelViewSet):
     """
     queryset = SupportMessage.objects.all()
     serializer_class = SupportMessageSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def perform_create(self, serializer):
         """

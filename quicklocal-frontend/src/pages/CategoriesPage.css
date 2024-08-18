@@ -1,0 +1,34 @@
+
+.categories-card {
+    width: 70%;
+    margin: 0 auto;
+    border-radius: 8px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.categories-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Image styling */
+.categories-image {
+    margin: 0 auto;
+    width: 80%;
+    height: 220px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* Button styling */
+.categories-button {
+    background-color: #014f86;
+    border: 1px solid #014f86;
+    transition: background-color 0.3s ease;
+}
+
+.categories-button:hover {
+    background-color: white;
+    color: #014f86;
+    border: 1px solid #014f86;
+}

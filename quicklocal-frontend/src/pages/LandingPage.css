@@ -26,7 +26,7 @@ span {
     padding: 0;
 }
 
-.overlay-card {
+.landing-overlay-card {
     position: absolute;
     top: 50%;
     left: 35%;
@@ -39,11 +39,18 @@ span {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.overlay-card:hover {
+.landing-overlay-card:hover {
     background-color: #fff;
     cursor: pointer;
 }
 
-.card-body {
+.landing-card-body {
     padding: 2.4rem;
+}
+
+.categories-section,
+.products-section
+{
+    background-color: #dee2e6;
+    padding: 2rem;
 }
