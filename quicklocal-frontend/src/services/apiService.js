@@ -27,6 +27,32 @@ const apiService = {
         } catch (error) {
             throw error;
         }
+    },
+
+    sendMessage: async(message) => {
+        try {
+            const response = await axios.post('http://127.0.0.1:8000/support/', message);
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    getProductsByCategory: async (categoryId) => {
+        try {
+            const response = await axios.get(`http://127.0.0.1:8000/category-products/?category=${categoryId}`)
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    },
+    getProductFilters: async (filter) => {
+        try {
+            const response = await axios.get(`http://127.0.0.1:8000/products/?ordering=${filter}`);
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
     }
     
 }

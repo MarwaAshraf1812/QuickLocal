@@ -1,0 +1,23 @@
+
+
+.contact-info {
+    margin-top: 5%;
+}
+
+.form-group label {
+    margin: 0.5rem 0;
+}
+
+.btn-custom {
+    background-color: #014f86;
+    color: #fff;
+    border: 1px solid #014f86;
+    padding: 0.5rem 2rem;
+    border-radius: 0.5rem;
+    margin-top: 1rem;
+}
+.btn-custom:hover {
+    border: 1px solid #014f86;
+    background-color: #fff;
+    color: #014f86;
+}

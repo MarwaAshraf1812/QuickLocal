@@ -1,3 +1,6 @@
+.offers{
+    padding: 0 2rem !important;
+}
 .offers__card {
     position: relative;
     overflow: hidden;

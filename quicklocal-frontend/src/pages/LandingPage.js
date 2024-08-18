@@ -6,7 +6,9 @@ import CategoriesSection from '../components/Category';
 import CategorySliderSection from '../components/CategorySliderSection';
 import OffersSection from '../components/OffersSection';
 import ProductsSection from '../components/ProductsSection';
+import Footer from '../components/Footer';
 import './LandingPage.css';
+import ContactUs from "../components/ContactUs";
 
 const LandingPage = () => {
     return (
@@ -36,14 +38,22 @@ const LandingPage = () => {
             <div className="ms-5">
                 <CategoriesSection />
             </div>
-            <div className="ms-5">
+            <div className="categories-section">
                 <CategorySliderSection />
             </div>
-            <div className="m-5">
+            <div className="my-5 py-5 offers-section">
                 <OffersSection/>
             </div>
-            <div className="m-5">
+            <div className="my-5 products-section">
                 <ProductsSection />
+            </div>
+
+            <div className="contactus-section mb-4">
+                <ContactUs />
+            </div>
+
+            <div className="">
+                <Footer />
             </div>
         </div>
     );
