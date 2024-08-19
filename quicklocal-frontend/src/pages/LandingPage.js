@@ -6,9 +6,9 @@ import CategoriesSection from '../components/Category';
 import CategorySliderSection from '../components/CategorySliderSection';
 import OffersSection from '../components/OffersSection';
 import ProductsSection from '../components/ProductsSection';
-import Footer from '../components/Footer';
-import './LandingPage.css';
 import ContactUs from "../components/ContactUs";
+import './LandingPage.css';
+
 
 const LandingPage = () => {
     return (
@@ -48,12 +48,8 @@ const LandingPage = () => {
                 <ProductsSection />
             </div>
 
-            <div className="contactus-section mb-4">
+            <div className="contactus-section">
                 <ContactUs />
-            </div>
-
-            <div className="">
-                <Footer />
             </div>
         </div>
     );

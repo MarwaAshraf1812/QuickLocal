@@ -1,7 +1,7 @@
 .products-card {
     border-radius: 8px;
-    overflow: hidden;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 290px;
 }
 
 .products-card:hover {
@@ -9,32 +9,32 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Image styling */
 .products-image {
     object-fit: cover;
-    height: 200px; /* Adjust the height as needed */
-    width: 100%;
+    height: 100% !important;
+    width: 80% !important;
+    padding: 1rem;
 }
 
-/* Card body styling */
 .cards-body {
     padding: 1.25rem;
 }
-
-/* Card title styling */
-.cards-title {
-    font-size: 1.25rem;
-    font-weight: 500;
-    margin-bottom: 0.5rem;
+.blue-color {
+    color: #004a9b;
 }
 
-/* Card text styling */
+.cards-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #004a9b;
+}
+
 .card-text {
     font-size: 1rem;
     color: #6c757d;
 }
 
-/* Button styling */
 .btn-primary {
     background-color: #007bff;
     border: none;
@@ -42,8 +42,21 @@
     padding: 0.5rem 1rem;
     font-size: 1rem;
     transition: background-color 0.3s ease;
+    margin-top: 10% !important;
 }
 
 .btn-primary:hover {
     background-color: #0056b3;
+}
+
+.btn-custom-color {
+    background-color: #0056b3 !important;
+    border: #0056b3 1px solid;
+    color: white !important;
+}
+
+.btn-custom-color:hover {
+    background-color: white !important;
+    border: #004a9b 1px solid;
+    color: #004a9b !important;
 }
