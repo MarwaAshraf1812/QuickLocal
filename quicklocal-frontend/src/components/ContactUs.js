@@ -31,7 +31,7 @@ const ContactUs = () => {
     };    
 
     return (
-        <div className="contact-us container my-5">
+        <div className="contact-us container">
         <div className="row">
             <div className="col-md-5 contact-info">
                 <h2 className='my-5 contact-title'>Contact Us <span>QuickLocal</span></h2>
